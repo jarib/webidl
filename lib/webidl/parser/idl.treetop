@@ -1,4 +1,3 @@
-
 module WebIDL
   module Parser
 
@@ -6,7 +5,7 @@ module WebIDL
     grammar IDL
 
       rule Definitions
-        ws (ExtendedAttributeList ws Definition ws Definitions)? ws
+        ws metadef:(eal:ExtendedAttributeList ws d:Definition ws defs:Definitions)? ws <ParseTree::Definitions>
       end
 
       rule Definition
@@ -18,11 +17,11 @@ module WebIDL
       end
 
       rule Module
-        "module" ws identifier ws "{" ws Definitions ws "}" ws ";"
+        "module" ws name:identifier ws "{" ws defs:Definitions ws "}" ws ";" <ParseTree::Module>
       end
 
       rule Interface
-        "interface" ws identifier ws InterfaceInheritance ws "{" ws InterfaceMembers ws "}" ws ";"
+        "interface" ws identifier ws InterfaceInheritance ws "{" ws InterfaceMembers ws "}" ws ";" <ParseTree::Interface>
       end
 
       rule InterfaceInheritance
@@ -46,7 +45,7 @@ module WebIDL
       end
 
       rule TypeDef
-        "typedef" ws Type ws identifier ws ";"
+        "typedef" ws type:Type ws name:identifier ws ";" <ParseTree::TypeDef>
       end
 
       rule ImplementsStatement
@@ -358,7 +357,7 @@ module WebIDL
       rule block_comment
          '/*' (!'*/' . )* '*/'
       end
-      
+
     end # IDL
   end # Parser
 end # WebIDL
