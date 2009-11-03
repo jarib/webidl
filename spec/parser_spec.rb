@@ -10,10 +10,10 @@ describe WebIDL::Parser::IDLParser do
     definitions.first.should be_instance_of(WebIDL::Ast::Module)
   end
 
-  # it "parses a simple interface" do
-  #   result = parse fixture("simple_interface.idl")
-  #   result.should_not be_nil
-  # end
+  it "parses a simple interface" do
+    result = parse fixture("simple_interface.idl")
+    result.should_not be_nil
+  end
   #
   # it "parses a module with several interfaces" do
   #   result = parse fixture("framework.idl")
