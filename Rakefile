@@ -5,13 +5,14 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "webidl"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{WebIDL parser/generator for ruby}
+    gem.description = %Q{Built on Treetop, this gem will parse an interface declaration in WebIDL and generate ruby code}
     gem.email = "jari.bakken@gmail.com"
     gem.homepage = "http://github.com/jarib/webidl"
     gem.authors = ["Jari Bakken"]
+    gem.add_dependency "treetop"
+    gem.add_dependency "ruby2ruby"
     gem.add_development_dependency "rspec"
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
@@ -27,6 +28,17 @@ Spec::Rake::SpecTask.new(:rcov) do |spec|
   spec.libs << 'lib' << 'spec'
   spec.pattern = 'spec/**/*_spec.rb'
   spec.rcov = true
+end
+
+namespace :parser do
+  task :compile do
+    require 'treetop'
+    compiler = Treetop::Compiler::GrammarCompiler.new
+    treetop_dir = File.expand_path(File.join(File.dirname(__FILE__), "lib", "webidl", "parser"))
+    Dir[File.join(treetop_dir, "*.{tt,treetop}")].each do |treetop_file_path|
+      compiler.compile(treetop_file_path)
+    end
+  end
 end
 
 task :spec => :check_dependencies
