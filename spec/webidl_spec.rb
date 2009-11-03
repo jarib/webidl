@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe WebIDLParser do
+describe WebIDL::Parser::IDLParser do
   it "parses a simple module" do
     result = parse fixture("simple_module.idl")
     result.should_not be_nil

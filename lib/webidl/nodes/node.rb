@@ -1,6 +1,5 @@
 module WebIDL
-  # TODO: nodes
   class Node
 
-  end
-end
+  end # Node
+end # WebIDL

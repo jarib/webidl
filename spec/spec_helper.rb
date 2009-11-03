@@ -27,6 +27,6 @@ end
 Spec::Runner.configure do |c|
   c.include(ParseHelper)
   c.before(:each) do
-    @parser = WebIDLParser.new
+    @parser = WebIDL::Parser::IDLParser.new
   end
 end

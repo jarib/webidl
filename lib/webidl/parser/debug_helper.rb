@@ -1,11 +1,17 @@
-module DebugHelper
-  def terminal_parse_failure(*args)
-    p :terminal_parse_failure => args
-    super
-  end
+module WebIDL
+  module Parser
+    module DebugHelper
 
-  def instantiate_node(node, input, interval, *args)
-    p :instantiating_from => caller.first[/in `(.+)'/, 1], :str => input[interval]
-    super
-  end
-end
+      def terminal_parse_failure(*args)
+        p :terminal_parse_failure => args
+        super
+      end
+
+      def instantiate_node(node, input, interval, *args)
+        p :instantiating_from => caller.first[/in `(.+)'/, 1], :str => input[interval]
+        super
+      end
+
+    end # DebugHelper
+  end # Parser
+end # WebIDL
