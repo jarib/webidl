@@ -4,12 +4,13 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "webidl"
-    gem.summary = %Q{WebIDL parser/generator for ruby}
+    gem.name        = "webidl"
+    gem.summary     = %Q{WebIDL parser/generator for ruby}
     gem.description = %Q{Built on Treetop, this gem will parse an interface declaration in WebIDL and generate ruby code}
-    gem.email = "jari.bakken@gmail.com"
-    gem.homepage = "http://github.com/jarib/webidl"
-    gem.authors = ["Jari Bakken"]
+    gem.email       = "jari.bakken@gmail.com"
+    gem.homepage    = "http://github.com/jarib/webidl"
+    gem.authors     = ["Jari Bakken"]
+
     gem.add_dependency "treetop"
     gem.add_dependency "ruby2ruby"
     gem.add_development_dependency "rspec"
