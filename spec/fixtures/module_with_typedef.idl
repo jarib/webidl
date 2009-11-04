@@ -1,0 +1,4 @@
+module gui {
+  typedef DOMString string;
+
+};

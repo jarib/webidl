@@ -1,7 +1,7 @@
 module WebIDL
   module Parser
 
-    # http://www.w3.org/TR/WebIDL/#idl-grammar
+    # http://dev.w3.org/2006/webapi/WebIDL/#idl-grammar
     grammar IDL
 
       rule Definitions
@@ -21,15 +21,15 @@ module WebIDL
       end
 
       rule Interface
-        "interface" ws identifier ws InterfaceInheritance ws "{" ws InterfaceMembers ws "}" ws ";" <ParseTree::Interface>
+        "interface" ws name:identifier ws inherits:InterfaceInheritance ws "{" ws members:InterfaceMembers ws "}" ws ";" <ParseTree::Interface>
       end
 
       rule InterfaceInheritance
-        (":" ws ScopedNameList)?
+        (":" ws name:ScopedNameList)?
       end
 
       rule InterfaceMembers
-        (ExtendedAttributeList ws InterfaceMember ws InterfaceMembers ws)?
+        (eal:ExtendedAttributeList ws member:InterfaceMember ws members:InterfaceMembers ws <ParseTree::InterfaceMembers>)?
       end
 
       rule InterfaceMember
@@ -53,7 +53,7 @@ module WebIDL
       end
 
       rule Const
-        "const" ws Type ws identifier ws "=" ws ConstExpr ws ";"
+        "const" ws type:Type ws name:identifier ws "=" ws const_expr:ConstExpr ws ";" <ParseTree::Const>
       end
 
       rule ConstExpr
@@ -73,7 +73,7 @@ module WebIDL
       end
 
       rule Attribute
-        ReadOnly ws "attribute" ws Type ws identifier ws GetRaises ws SetRaises ws ";"
+        ro:ReadOnly ws "attribute" ws type:Type ws name:identifier ws get_raises:GetRaises ws set_raises:SetRaises ws ";" <ParseTree::Attribute>
       end
 
       rule ReadOnly
@@ -89,15 +89,15 @@ module WebIDL
       end
 
       rule Operation
-        OmittableSpecials ws OperationRest
+        specials:(OmittableSpecials / Specials) ws op:OperationRest <ParseTree::Operation>
       end
 
       rule OmittableSpecials
-        "omittable" ws Specials / Specials
+        omit:"omittable" ws Specials <ParseTree::OmittableSpecials>
       end
 
       rule Specials
-        (Special ws Specials)?
+        (first:Special ws rest:Specials <ParseTree::Specials>)?
       end
 
       rule Special
@@ -109,7 +109,7 @@ module WebIDL
       end
 
       rule OperationRest
-        ReturnType ws OptionalIdentifier ws "(" ws ArgumentList ws ")" ws Raises ws ";"
+        type:ReturnType ws optional_id:OptionalIdentifier ws "(" ws args:ArgumentList ws ")" ws raises:Raises ws ";"
       end
 
       rule OptionalIdentifier
@@ -125,15 +125,15 @@ module WebIDL
       end
 
       rule ArgumentList
-        (Argument ws Arguments)?
+        (arg:Argument ws args:Arguments <ParseTree::ArgumentList>)?
       end
 
       rule Arguments
-        ("," ws Argument ws Arguments)?
+        ("," ws arg:Argument ws args:Arguments <ParseTree::ArgumentList>)?
       end
 
       rule Argument
-        ExtendedAttributeList ws In ws Optional ws Type ws Ellipsis ws identifier
+        eal:ExtendedAttributeList ws In ws optional:Optional ws type:Type ws variadic:Ellipsis ws id:identifier <ParseTree::Argument>
       end
 
       rule In
@@ -157,7 +157,7 @@ module WebIDL
       end
 
       rule ExtendedAttributeList
-        ("[" ws ExtendedAttribute ws ExtendedAttributes ws "]")?
+        ("[" ws attribute:ExtendedAttribute ws attributes:ExtendedAttributes ws "]" <ParseTree::ExtendedAttributeList>)?
       end
 
       rule ExtendedAttributes
@@ -178,23 +178,27 @@ module WebIDL
       end
 
       rule ExtendedAttributeNoArg
-        identifier
+        identifier {
+          def build
+            Ast::ExtendedAttribute.new(text_value)
+          end
+        }
       end
 
       rule ExtendedAttributeArgList
-        identifier ws "(" ws ArgumentList ws ")"
+        name:identifier ws "(" ws args:ArgumentList ws ")" <ParseTree::ExtendedAttributeArgList>
       end
 
       rule ExtendedAttributeIdent
-        identifier ws "=" ws identifier
+        identifier ws "=" ws identifier <ParseTree::ExtendedAttributeIdent>
       end
 
       rule ExtendedAttributeScopedName
-        identifier ws "=" ws ScopedName
+        identifier ws "=" ws ScopedName <ParseTree::ExtendedAttributeScopedName>
       end
 
       rule ExtendedAttributeNamedArgList
-        identifier ws "=" ws identifier ws "(" ws ArgumentList ws ")"
+        identifier ws "=" ws identifier ws "(" ws ArgumentList ws ")" <ParseTree::ExtendedAttributeNamedArgList>
       end
 
 
@@ -269,13 +273,13 @@ module WebIDL
       #
 
       rule NullableType
-          UnsignedIntegerType Nullable
-        / "boolean" Nullable !NonSpace
-        / "octet" Nullable !NonSpace
-        / "float" Nullable !NonSpace
-        / "double" Nullable !NonSpace
-        / "DOMString" Nullable !NonSpace
-        / "sequence" ws "<" ws Type ws ">" Nullable !NonSpace
+          type:UnsignedIntegerType              null:Nullable           <ParseTree::NullableType>
+        / type:"boolean"                        null:Nullable !NonSpace <ParseTree::NullableType>
+        / type:"octet"                          null:Nullable !NonSpace <ParseTree::NullableType>
+        / type:"float"                          null:Nullable !NonSpace <ParseTree::NullableType>
+        / type:"double"                         null:Nullable !NonSpace <ParseTree::NullableType>
+        / type:"DOMString"                      null:Nullable !NonSpace <ParseTree::NullableType>
+        / type:"sequence" ws "<" ws Type ws ">" null:Nullable !NonSpace <ParseTree::NullableType>
       end
 
       rule UnsignedIntegerType
@@ -299,7 +303,7 @@ module WebIDL
       end
 
       rule ReturnType
-        Type / "void"
+        Type / "void" <ParseTree::VoidType>
       end
 
       rule ScopedNameList
@@ -315,15 +319,15 @@ module WebIDL
       end
 
       rule AbsoluteScopedName
-        "::" ws identifier ws ScopedNameParts
+        "::" ws name:identifier ws parts:ScopedNameParts <ParseTree::AbsoluteScopedName>
       end
 
       rule RelativeScopedName
-        identifier ScopedNameParts
+        name:identifier parts:ScopedNameParts <ParseTree::RelativeScopedName>
       end
 
       rule ScopedNameParts
-        ("::" ws identifier ws ScopedNameParts)?
+        ("::" ws name:identifier parts:ScopedNameParts)?
       end
 
       rule integer

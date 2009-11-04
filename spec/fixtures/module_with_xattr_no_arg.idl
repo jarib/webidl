@@ -1,0 +1,5 @@
+[OverrideBuiltins]
+module gui {
+  typedef DOMString string;
+
+};

@@ -3,13 +3,17 @@ module WebIDL
     class Definitions < Treetop::Runtime::SyntaxNode
 
       def build
-        extended_attributes = metadef.eal.build unless metadef.eal.empty?
-        definitions = []
+        return [] if metadef.empty?
 
-        definitions << metadef.d unless metadef.d.empty?
-        definitions << metadef.defs unless metadef.defs.empty?
+        unless metadef.d.empty?
+          definition = metadef.d.build
+          definition.extended_attributes = metadef.eal.build unless metadef.eal.empty?
+        end
 
-        Ast::Definitions.new(extended_attributes, definitions.map { |d| d.build })
+        result = [definition]
+        result << metadef.defs.map { |e| e.build } unless metadef.defs.empty?
+
+        result
       end
 
     end # Definitions

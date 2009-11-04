@@ -3,10 +3,17 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
 require "rubygems"
 require 'webidl'
-require "ruby-debug"
 require 'spec'
 require 'spec/autorun'
 require "pp"
+
+require "ruby-debug"
+
+Debugger.start
+Debugger.settings[:autoeval] = true
+Debugger.settings[:autolist] = 1
+
+
 
 module ParseHelper
   def parse(input)
