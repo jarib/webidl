@@ -15,7 +15,11 @@ describe WebIDL::Parser::IDLParser do
   end
 
   it "parses modules with extended attributes" do
+    parse(fixture("module_with_xattr_ident.idl")).should_not be_nil
+    parse(fixture("module_with_xattr_named_args.idl")).should_not be_nil
     parse(fixture("module_with_xattr_no_arg.idl")).should_not be_nil
+    parse(fixture("module_with_xattr_scoped.idl")).should_not be_nil
+    parse(fixture("module_with_xattr_two_args.idl")).should_not be_nil
   end
 
   #
@@ -36,11 +40,11 @@ describe WebIDL::Parser::IDLParser do
   #
 
   it "parses a known type followed by other characters" do
-    result = parse <<-IDL
+    str = <<-IDL
       interface Foo { readonly attribute DOMStringMap bar;  };
     IDL
 
-    result.should_not be_nil
+    parse(str).should_not be_nil
   end
 
   it "parses the HTML5 DOM interface idl" do

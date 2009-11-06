@@ -27,8 +27,9 @@ end
 
 Spec::Rake::SpecTask.new(:rcov) do |spec|
   spec.libs << 'lib' << 'spec'
-  spec.pattern = 'spec/**/*_spec.rb'
-  spec.rcov = true
+  spec.pattern   = 'spec/**/*_spec.rb'
+  spec.rcov      = true
+  spec.rcov_opts = %w[--exclude spec,ruby-debug,/Library/Ruby,.gem --include lib/webidl]
 end
 
 namespace :parser do

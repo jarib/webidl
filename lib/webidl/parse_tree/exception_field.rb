@@ -1,11 +1,11 @@
 module WebIDL
   module ParseTree
-    class Attribute < Treetop::Runtime::SyntaxNode
+    class ExceptionField < Treetop::Runtime::SyntaxNode
 
       def build
         raise NotImplementedError
       end
 
-    end # Attribute
+    end # ExceptionField
   end # ParseTree
 end # WebIDL

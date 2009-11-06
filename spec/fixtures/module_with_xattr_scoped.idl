@@ -1,0 +1,4 @@
+[Prefix=org::example]
+module gui {
+
+};

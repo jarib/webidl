@@ -28,6 +28,7 @@ module WebIDL
         (":" ws name:ScopedNameList)?
       end
 
+      # extract to a generic Members syntax node?
       rule InterfaceMembers
         (eal:ExtendedAttributeList ws member:InterfaceMember ws members:InterfaceMembers ws <ParseTree::InterfaceMembers>)?
       end
@@ -37,11 +38,12 @@ module WebIDL
       end
 
       rule Exception
-        "exception" ws identifier ws "{" ws ExceptionMembers ws "}" ws ";"
+        "exception" ws name:identifier ws "{" ws members:ExceptionMembers ws "}" ws ";" <ParseTree::Exception>
       end
 
+      # extract to a generic Members syntax node?
       rule ExceptionMembers
-        (ExtendedAttributeList ws ExceptionMember ws ExceptionMembers ws)?
+        (eal:ExtendedAttributeList ws member:ExceptionMember ws members:ExceptionMembers ws <ParseTree::InterfaceMembers>)?
       end
 
       rule TypeDef
@@ -61,7 +63,7 @@ module WebIDL
       end
 
       rule BooleanLiteral
-        "true" / "false"
+        ("true" / "false") { def build() text_value == "true" end }
       end
 
       rule AttributeOrOperation
@@ -153,7 +155,7 @@ module WebIDL
       end
 
       rule ExceptionField
-        Type ws identifier ws ";"
+        type:Type ws id:identifier ws ";" <ParseTree::ExceptionField>
       end
 
       rule ExtendedAttributeList
@@ -186,19 +188,19 @@ module WebIDL
       end
 
       rule ExtendedAttributeArgList
-        name:identifier ws "(" ws args:ArgumentList ws ")" <ParseTree::ExtendedAttributeArgList>
-      end
-
-      rule ExtendedAttributeIdent
-        identifier ws "=" ws identifier <ParseTree::ExtendedAttributeIdent>
+        name:identifier "(" ws args:ArgumentList ws ")" <ParseTree::ExtendedAttributeArgList>
       end
 
       rule ExtendedAttributeScopedName
-        identifier ws "=" ws ScopedName <ParseTree::ExtendedAttributeScopedName>
+        key:identifier "=" scoped_name:ScopedName <ParseTree::ExtendedAttributeScopedName>
+      end
+
+      rule ExtendedAttributeIdent
+        key:identifier "=" value:identifier !"::" <ParseTree::ExtendedAttributeIdent>
       end
 
       rule ExtendedAttributeNamedArgList
-        identifier ws "=" ws identifier ws "(" ws ArgumentList ws ")" <ParseTree::ExtendedAttributeNamedArgList>
+        key:identifier "=" value:(name:identifier "(" ws args:ArgumentList ws ")" <ParseTree::ExtendedAttributeArgList>) <ParseTree::ExtendedAttributeNamedArgList>
       end
 
 
@@ -319,7 +321,7 @@ module WebIDL
       end
 
       rule AbsoluteScopedName
-        "::" ws name:identifier ws parts:ScopedNameParts <ParseTree::AbsoluteScopedName>
+        "::" name:identifier parts:ScopedNameParts <ParseTree::AbsoluteScopedName>
       end
 
       rule RelativeScopedName

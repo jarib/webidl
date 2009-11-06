@@ -18,13 +18,19 @@ module WebIDL
 
     class ExtendedAttributeIdent < Treetop::Runtime::SyntaxNode
       def build
-        raise NotImplementedError
+        [key, value].map { |e| e.text_value }
       end
     end
 
     class ExtendedAttributeNamedArgList < Treetop::Runtime::SyntaxNode
       def build
-        raise NotImplementedError
+        [key.text_value, value.build]
+      end
+    end
+
+    class ExtendedAttributeScopedName < Treetop::Runtime::SyntaxNode
+      def build
+        [key.text_value, scoped_name.build]
       end
     end
 
