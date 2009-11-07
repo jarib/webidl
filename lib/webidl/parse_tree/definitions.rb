@@ -11,7 +11,7 @@ module WebIDL
         end
 
         result = [definition]
-        result << metadef.defs.build.map { |e| e.build } unless metadef.defs.empty?
+        result << metadef.defs.build unless metadef.defs.empty?
 
         result
       end

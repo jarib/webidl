@@ -2,8 +2,10 @@ module WebIDL
   module Ast
     class Type
 
-      def initialize(type, opts = {})
-        @type     = type.to_sym
+      attr_reader :name
+
+      def initialize(name, opts = {})
+        @name     = name.strip.to_sym
         @nullable = !!opts[:nullable]
       end
 

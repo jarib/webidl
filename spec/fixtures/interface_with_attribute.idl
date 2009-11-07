@@ -1,0 +1,7 @@
+interface foo {
+    // Attribute identifier: "const"
+    attribute boolean _const;
+
+    // Attribute identifier: "value"
+    attribute DOMString? _value;
+};

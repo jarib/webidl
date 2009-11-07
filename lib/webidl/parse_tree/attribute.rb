@@ -3,7 +3,13 @@ module WebIDL
     class Attribute < Treetop::Runtime::SyntaxNode
 
       def build
-        raise NotImplementedError
+        options = {
+          :readonly  => readonly.any?,
+          :getraises => (getraises.build unless getraises.empty?),
+          :setraises => (setraises.build unless setraises.empty?)
+        }
+
+        Ast::Attribute.new type.build, name.build, options
       end
 
     end # Attribute

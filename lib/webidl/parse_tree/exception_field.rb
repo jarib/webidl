@@ -3,7 +3,7 @@ module WebIDL
     class ExceptionField < Treetop::Runtime::SyntaxNode
 
       def build
-        raise NotImplementedError
+        [type.build, id.text_value]
       end
 
     end # ExceptionField

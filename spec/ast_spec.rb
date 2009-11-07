@@ -119,9 +119,9 @@ describe WebIDL::Ast do
     interface.members.first.should be_kind_of(WebIDL::Ast::Operation)
   end
 
-  # it "creates a the framework example from the WebIDL spec" do
-  #   interface = parse(fixture("framework.idl")).build.first
-  # end
+  it "creates a framework from the example in the WebIDL spec" do
+    interface = parse(fixture("framework.idl")).build.first
+  end
 
 
   #
@@ -130,11 +130,39 @@ describe WebIDL::Ast do
 
   it "creates an exception" do
     interface = parse(fixture("module_with_exception.idl")).build.first
-    debugger
-    nil
+    ex        = interface.definitions.first
+
+    ex.name.should == "FrameworkException"
+    ex.members.size.should == 2
+
+    first, last = ex.members
+
+    first.should be_kind_of(WebIDL::Ast::Const)
+    first.name.should == "ERR_NOT_FOUND"
+    first.type.should be_kind_of(WebIDL::Ast::Type)
+    first.type.name.should == :long
+    first.value.should == 1
+
+    # TODO: should be custom object instead of array?
+    last.first.should be_kind_of(WebIDL::Ast::Type)
+    last.first.name.should == :long
+    last.last.should == "code"
   end
 
 
-  it "creates an attribute"
+  it "creates an attribute" do
+    interface = parse(fixture("interface_with_attribute.idl")).build.first
+    first, last = interface.members
+
+    first.should be_kind_of(WebIDL::Ast::Attribute)
+    last.should be_kind_of(WebIDL::Ast::Attribute)
+
+    first.name.should == 'const'
+
+
+    last.name.should == 'value'
+    last.type.name.should == :DOMString
+    last.type.should be_nullable
+  end
 
 end

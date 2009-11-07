@@ -35,6 +35,11 @@ describe WebIDL::Parser::IDLParser do
     result.should_not be_nil
   end
 
+  it "parses an interface with an attribute" do
+    parse(fixture("interface_with_attribute.idl")).should_not be_nil
+  end
+
+
   #
   # various
   #
