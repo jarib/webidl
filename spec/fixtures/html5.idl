@@ -108,7 +108,9 @@ interface HTMLDocument {
            attribute Function onvolumechange;
            attribute Function onwaiting;
 };
-Document implements HTMLDocument;interface HTMLMarqueeElement : HTMLElement {
+Document implements HTMLDocument;
+
+interface HTMLMarqueeElement : HTMLElement {
            attribute DOMString behavior;
            attribute DOMString bgColor;
            attribute DOMString direction;
@@ -1421,7 +1423,9 @@ interface MessagePort {
   // event handlers
            attribute Function onmessage;
 };
-MessagePort implements EventTarget;interface HTMLAppletElement : HTMLElement {
+MessagePort implements EventTarget;
+
+interface HTMLAppletElement : HTMLElement {
            attribute DOMString align;
            attribute DOMString alt;
            attribute DOMString archive;

@@ -2,12 +2,12 @@ module WebIDL
   module Ast
     class Module < Node
 
-      attr_reader :name, :definitions
-      attr_accessor :extended_attributes
+      attr_reader :name
+      attr_accessor :extended_attributes, :definitions
 
-      def initialize(name, definitions)
+      def initialize(parent, name)
+        @parent              = parent
         @name                = name
-        @definitions         = definitions
         @extended_attributes = []
       end
 

@@ -1,13 +1,24 @@
 module WebIDL
   module Ast
-    class Interface
+    class Interface < Node
 
-      attr_reader :name, :members, :inherits
+      def self.list
+        @list ||= {}
+      end
 
-      def initialize(name, members = [], inherits = nil )
-        @name = name
-        @members = members
-        @inherits = inherits
+      attr_reader :name
+      attr_accessor :extended_attributes, :members, :inherits, :implements
+
+      def initialize(parent, name)
+        super(parent)
+
+        @name                = name
+        @members             = []
+        @inherits            = []
+        @implements          = []
+        @extended_attributes = []
+
+        Interface.list[qualified_name] = self
       end
 
     end

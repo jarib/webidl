@@ -1,4 +1,4 @@
-module gui {
+module framework {
   // Exception identifier: "FrameworkException"
   // Qualified name:       "::framework::FrameworkException"
   exception FrameworkException {

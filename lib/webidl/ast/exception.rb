@@ -1,12 +1,15 @@
 module WebIDL
   module Ast
-    class Exception
-      attr_reader :name, :members
+    class Exception < Node
+      attr_reader :name
+      attr_accessor :members
 
-      def initialize(name, members)
+      def initialize(parent, name)
+        @parent  = parent
         @name    = name
-        @members = members
+        @members = []
       end
+
     end # Exception
   end # Ast
 end # WebIDL

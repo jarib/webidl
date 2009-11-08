@@ -2,7 +2,7 @@ module WebIDL
   module ParseTree
     class AbsoluteScopedName < Treetop::Runtime::SyntaxNode
 
-      def build
+      def build(parent)
         raise NotImplementedError
       end
 

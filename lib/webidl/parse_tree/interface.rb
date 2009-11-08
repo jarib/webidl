@@ -2,12 +2,18 @@ module WebIDL
   module ParseTree
     class Interface < Treetop::Runtime::SyntaxNode
 
-      def build
-        Ast::Interface.new(
-          name.text_value,
-          (members.build unless members.empty?),
-          (inherits.name unless inherits.empty?)
-        )
+      def build(parent)
+        intf = Ast::Interface.new(parent, name.text_value)
+
+        unless members.empty?
+          members.build(intf)
+        end
+
+        unless inherits.empty?
+          inherits.build(intf)
+        end
+
+        intf
       end
 
     end # Interface

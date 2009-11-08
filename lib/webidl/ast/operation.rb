@@ -1,10 +1,11 @@
 module WebIDL
   module Ast
-    class Operation
+    class Operation < Node
 
       attr_reader :type, :name, :args, :specials, :raises
 
-      def initialize(type, opts = {})
+      def initialize(parent, type, opts = {})
+        @parent   = parent
         @type     = type
         @name     = opts[:name]      || '(unknown)'
         @specials = opts[:specials] || []

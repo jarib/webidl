@@ -2,12 +2,12 @@ module WebIDL
   module ParseTree
     class RelativeScopedName < Treetop::Runtime::SyntaxNode
 
-      def build
+      def build(parent)
         n = ''
         n << name.text_value
         n << parts.text_value
 
-        sn = Ast::ScopedName.new(n, :relative => true)
+        sn = Ast::ScopedName.new(parent, n, :relative => true)
       end
 
     end # RelativeScopedName

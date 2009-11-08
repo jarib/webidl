@@ -51,7 +51,7 @@ module WebIDL
       end
 
       rule ImplementsStatement
-        ScopedName ws "implements" ws ScopedName ws ";"
+        implementor:ScopedName ws "implements" ws implementee:ScopedName ws ";" <ParseTree::ImplementsStatement>
       end
 
       rule Const
@@ -181,7 +181,7 @@ module WebIDL
 
       rule ExtendedAttributeNoArg
         identifier {
-          def build
+          def build(parent)
             Ast::ExtendedAttribute.new(text_value)
           end
         }

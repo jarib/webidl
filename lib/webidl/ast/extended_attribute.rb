@@ -1,6 +1,6 @@
 module WebIDL
   module Ast
-    class ExtendedAttribute
+    class ExtendedAttribute < Node
 
       attr_reader :name, :args
 

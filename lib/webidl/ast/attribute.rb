@@ -1,15 +1,19 @@
 module WebIDL
   module Ast
-    class Attribute
+    class Attribute < Node
 
       attr_reader :type, :name, :getraises, :setraises
+      attr_accessor :extended_attributes
 
-      def initialize(type, name, opts = {})
-        @type      = type
-        @name      = name
-        @readonly  = !!opts[:readonly]
-        @setraises = opts[:setraises] || []
-        @getraises = opts[:getraises] || []
+      def initialize(parent, type, name, opts = {})
+        super(parent)
+
+        @type                = type
+        @name                = name
+        @readonly            = !!opts[:readonly]
+        @setraises           = opts[:setraises] || []
+        @getraises           = opts[:getraises] || []
+        @extanded_attributes = opts[:extanded_attributes] || []
       end
 
       def readonly?

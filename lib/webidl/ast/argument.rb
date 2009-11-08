@@ -1,6 +1,6 @@
 module WebIDL
   module Ast
-    class Argument
+    class Argument < Node
 
       attr_reader :name, :type
 

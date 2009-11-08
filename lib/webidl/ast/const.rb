@@ -1,10 +1,12 @@
 module WebIDL
   module Ast
-    class Const
+    class Const < Node
 
       attr_reader :type, :name, :value
 
-      def initialize(type, name, value)
+      def initialize(parent, type, name, value)
+        super(parent)
+
         @type  = type
         @name  = name
         @value = value

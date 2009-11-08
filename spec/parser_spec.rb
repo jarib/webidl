@@ -6,8 +6,8 @@ describe WebIDL::Parser::IDLParser do
   # modules
   #
 
-  it "parses a simple module" do
-    parse(fixture("simple_module.idl")).should_not be_nil
+  it "parses an empty module" do
+    parse(fixture("empty_module.idl")).should_not be_nil
   end
 
   it "parses a module with a typedef" do
@@ -26,8 +26,8 @@ describe WebIDL::Parser::IDLParser do
   # interfaces
   #
 
-  it "parses a simple interface" do
-    parse(fixture("simple_interface.idl")).should_not be_nil
+  it "parses an empty interface" do
+    parse(fixture("empty_interface.idl")).should_not be_nil
   end
 
   it "parses a module with several interfaces" do
@@ -50,6 +50,10 @@ describe WebIDL::Parser::IDLParser do
     IDL
 
     parse(str).should_not be_nil
+  end
+
+  it "parses the WebSocket interface idl" do
+    parse(fixture("websocket.idl")).should_not be_nil
   end
 
   it "parses the HTML5 DOM interface idl" do

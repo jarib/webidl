@@ -2,8 +2,12 @@ module WebIDL
   module ParseTree
     class Module < Treetop::Runtime::SyntaxNode
 
-      def build
-        Ast::Module.new(name.text_value, defs.build)
+      def build(parent = nil)
+        m = Ast::Module.new(parent, name.text_value)
+
+        defs.build(m)
+
+        m
       end
 
     end # Module

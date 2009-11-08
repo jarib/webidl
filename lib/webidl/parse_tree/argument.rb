@@ -2,10 +2,10 @@ module WebIDL
   module ParseTree
     class Argument < Treetop::Runtime::SyntaxNode
 
-      def build
+      def build(parent)
         arg = Ast::Argument.new(
           id.text_value,
-          type.build,
+          type.build(parent),
           :optional => optional.any?,
           :variadic => variadic.any?
         )

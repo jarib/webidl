@@ -1,15 +1,14 @@
 module WebIDL
   module Ast
-    class TypeDef < Node
+    class Field < Node
 
       attr_reader :type, :name
 
       def initialize(parent, type, name)
-        @parent = parent
-        @type   = type
-        @name   = name
+        super(parent)
+        @type, @name = type, name
       end
 
-    end # TypeDef
+    end # Field
   end # Ast
 end # WebIDL

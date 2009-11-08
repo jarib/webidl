@@ -2,18 +2,22 @@ module WebIDL
   module ParseTree
     class Definitions < Treetop::Runtime::SyntaxNode
 
-      def build
+      def build(parent = nil)
         return [] if metadef.empty?
 
         unless metadef.d.empty?
-          definition = metadef.d.build
+          definition = metadef.d.build(parent)
           definition.extended_attributes = metadef.eal.build unless metadef.eal.empty?
         end
 
         result = [definition]
-        result << metadef.defs.build unless metadef.defs.empty?
+        result += metadef.defs.build(parent) unless metadef.defs.empty?
 
-        result
+        if parent
+          parent.definitions = result
+        end
+
+        result.compact
       end
 
     end # Definitions

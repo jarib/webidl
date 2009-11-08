@@ -2,12 +2,16 @@ module WebIDL
   module ParseTree
     class InterfaceMembers < Treetop::Runtime::SyntaxNode
 
-      def build
-        m = member.build
+      def build(parent)
+        m = member.build(parent)
         m.extended_attributes = eal.build unless eal.empty?
 
         list = [m]
-        list += members.build unless members.empty?
+        list += members.build(parent) unless members.empty?
+
+        if parent
+          parent.members = list
+        end
 
         list
       end

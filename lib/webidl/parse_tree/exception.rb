@@ -2,11 +2,12 @@ module WebIDL
   module ParseTree
     class Exception < Treetop::Runtime::SyntaxNode
 
-      def build
-        n = name.text_value
-        m = members.build unless members.empty?
+      def build(parent)
+        ex = Ast::Exception.new(parent, name.text_value)
 
-        Ast::Exception.new(n, m)
+        members.build(ex) unless members.empty?
+
+        ex
       end
 
     end # Exception

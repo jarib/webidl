@@ -7,12 +7,13 @@ describe WebIDL::Ast do
   #
 
   it "creates a module" do
-    result = parse(fixture("simple_module.idl")).build
+    result = parse(fixture("empty_module.idl")).build
 
     result.should be_kind_of(Array)
     result.size.should == 1
 
     result.first.should be_kind_of(WebIDL::Ast::Module)
+    result.first.qualified_name.should == "::gui"
   end
 
   it "creates a module with a typedef" do
@@ -25,6 +26,7 @@ describe WebIDL::Ast do
 
     typedef.type.should == 'DOMString'
     typedef.name.should == 'string'
+    typedef.qualified_name.should == '::gui::string'
   end
 
   it "creates a module with an extended attribute (no args)" do
@@ -101,8 +103,8 @@ describe WebIDL::Ast do
   # interfaces
   #
 
-  it "creates a simple interface" do
-    result = parse(fixture("simple_interface.idl")).build
+  it "creates an empty interface" do
+    result = parse(fixture("empty_interface.idl")).build
 
     result.should be_kind_of(Array)
     result.size.should == 1
@@ -120,7 +122,23 @@ describe WebIDL::Ast do
   end
 
   it "creates a framework from the example in the WebIDL spec" do
-    interface = parse(fixture("framework.idl")).build.first
+    mod = parse(fixture("framework.idl")).build.first
+    mod.definitions.size.should == 4
+    mod.definitions.map { |e| e.class}.should == [
+      WebIDL::Ast::TypeDef,
+      WebIDL::Ast::Exception,
+      WebIDL::Ast::Interface,
+      WebIDL::Ast::Module
+    ]
+
+    inner_mod = mod.definitions[3]
+    inner_mod.name.should == 'gui'
+    inner_mod.qualified_name.should == '::framework::gui'
+
+    interface = inner_mod.definitions[0]
+    interface.name.should == 'TextField'
+    interface.qualified_name.should == '::framework::gui::TextField'
+    interface.members.first.qualified_name.should == '::framework::gui::TextField::const' # or should it?
   end
 
 
@@ -133,20 +151,22 @@ describe WebIDL::Ast do
     ex        = interface.definitions.first
 
     ex.name.should == "FrameworkException"
+    ex.qualified_name.should == '::framework::FrameworkException'
     ex.members.size.should == 2
 
     first, last = ex.members
 
     first.should be_kind_of(WebIDL::Ast::Const)
     first.name.should == "ERR_NOT_FOUND"
+    first.qualified_name.should == '::framework::FrameworkException::ERR_NOT_FOUND'
     first.type.should be_kind_of(WebIDL::Ast::Type)
     first.type.name.should == :long
     first.value.should == 1
 
-    # TODO: should be custom object instead of array?
-    last.first.should be_kind_of(WebIDL::Ast::Type)
-    last.first.name.should == :long
-    last.last.should == "code"
+    last.should be_kind_of(WebIDL::Ast::Field)
+    last.type.should be_kind_of(WebIDL::Ast::Type)
+    last.type.name.should == :long
+    last.name.should == "code"
   end
 
 
@@ -163,6 +183,14 @@ describe WebIDL::Ast do
     last.name.should == 'value'
     last.type.name.should == :DOMString
     last.type.should be_nullable
+  end
+
+  it "creates an implements statement" do
+    mod = parse(fixture("module_with_implements_statement.idl")).build.first
+
+    interface = mod.definitions.first
+    interface.should be_kind_of(WebIDL::Ast::Interface)
+    interface.implements.should == [mod.definitions.last]
   end
 
 end
