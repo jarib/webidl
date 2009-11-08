@@ -1,0 +1,7 @@
+interface Foo {
+  creator Foo (boolean foo);
+  setter void (DOMString key, DOMString value);
+  getter DOMString (DOMString key);
+  stringifier DOMString ();
+  deleter void ();
+};
