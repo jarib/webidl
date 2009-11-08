@@ -8,6 +8,7 @@ module WebIDL
       def initialize(parent, name)
         @parent              = parent
         @name                = name
+        @definitions         = []
         @extended_attributes = []
       end
 

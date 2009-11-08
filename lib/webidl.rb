@@ -1,8 +1,8 @@
 require "treetop"
 require "ruby2ruby"
 
-
 require "webidl/extensions/syntax_node"
+require "webidl/extensions/string"
 
 require "webidl/parse_tree/definitions"
 require "webidl/parse_tree/module"

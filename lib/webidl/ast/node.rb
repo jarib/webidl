@@ -17,7 +17,11 @@ module WebIDL
       end
 
       def accept(visitor, &blk)
-        visitor.send("visit_#{self.class.name.snake_case}", self, &blk)
+        visitor.send("visit_#{snake_name}", self, &blk)
+      end
+
+      def snake_name
+        self.class.name.split("::").last.snake_case
       end
 
     end # Node

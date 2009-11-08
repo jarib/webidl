@@ -4,7 +4,7 @@ module WebIDL
 
       def build(parent)
         arg = Ast::Argument.new(
-          id.text_value,
+          id.build,
           type.build(parent),
           :optional => optional.any?,
           :variadic => variadic.any?

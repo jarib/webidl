@@ -10,6 +10,7 @@ begin
     gem.email       = "jari.bakken@gmail.com"
     gem.homepage    = "http://github.com/jarib/webidl"
     gem.authors     = ["Jari Bakken"]
+    gem.bindir      = "bin"
 
     gem.add_dependency "treetop"
     gem.add_dependency "ruby2ruby"

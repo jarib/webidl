@@ -13,8 +13,6 @@ Debugger.start
 Debugger.settings[:autoeval] = true
 Debugger.settings[:autolist] = 1
 
-
-
 module ParseHelper
   def parse(input)
     result = @parser.parse(input)

@@ -1,0 +1,4 @@
+module foo {
+  interface bar {};
+  interface baz {};
+};

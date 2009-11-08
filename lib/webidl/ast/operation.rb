@@ -8,7 +8,7 @@ module WebIDL
       def initialize(parent, type, opts = {})
         @parent   = parent
         @type     = type
-        @name     = opts[:name]      || '(unknown)'
+        @name     = opts[:name]     || ''
         @specials = opts[:specials] || []
         @args     = opts[:args]     || []
         @raises   = opts[:raises]   || []

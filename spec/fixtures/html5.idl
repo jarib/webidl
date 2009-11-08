@@ -1,12 +1,3 @@
-// dependencies from http://dev.w3.org/csswg/cssom/
-
-interface LinkStyle {
-  readonly attribute StyleSheet sheet;
-};
-
-// =================================================
-
-
 [OverrideBuiltins]
 interface HTMLDocument {
   // resource metadata management
