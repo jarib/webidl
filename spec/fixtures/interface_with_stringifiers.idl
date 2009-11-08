@@ -1,5 +1,5 @@
 interface System {
   stringifier attribute DOMString href;
-  stringifier void foo();
+  stringifier DOMString ();
 };
 
