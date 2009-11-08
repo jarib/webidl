@@ -26,6 +26,14 @@ module ParseHelper
     result
   end
 
+  def generate(str)
+    generator.generate(str)
+  end
+
+  def generator
+    @generator ||= WebIDL::Generator.new
+  end
+
   def fixture(name)
     File.read("#{File.dirname(__FILE__)}/fixtures/#{name}")
   end

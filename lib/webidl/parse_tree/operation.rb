@@ -3,17 +3,25 @@ module WebIDL
     class Operation < Treetop::Runtime::SyntaxNode
 
       def build(parent)
-        special_list  = specials.build unless specials.empty?
-        type          = op.type.build(parent)
-        name          = op.optional_id.text_value unless op.optional_id.empty?
-        args          = op.args.build(parent) unless op.args.empty?
-        raises        = op.raises.build unless op.raises.empty?
+        if respond_to?(:specials)
+          special_list = specials.build unless specials.empty?
+          operation    = op
+        else
+          special_list = []
+          operation    = self
+        end
+
+        debugger unless operation.type.respond_to?(:build)
+        typ        = operation.type.build(parent)
+        name       = operation.optional_id.text_value unless operation.optional_id.empty?
+        arguments  = operation.args.build(parent) unless operation.args.empty?
+        raise_list = operation.raises.build unless operation.raises.empty?
 
         Ast::Operation.new(
-          parent, type, :name     => name,
+          parent, typ,  :name     => name,
                         :specials => special_list,
-                        :args     => args,
-                        :raises   => raises
+                        :args     => arguments,
+                        :raises   => raise_list
         )
       end
 

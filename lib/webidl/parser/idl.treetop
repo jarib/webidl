@@ -111,7 +111,7 @@ module WebIDL
       end
 
       rule OperationRest
-        type:ReturnType ws optional_id:OptionalIdentifier ws "(" ws args:ArgumentList ws ")" ws raises:Raises ws ";"
+        type:ReturnType ws optional_id:OptionalIdentifier ws "(" ws args:ArgumentList ws ")" ws raises:Raises ws ";" <ParseTree::Operation>
       end
 
       rule OptionalIdentifier

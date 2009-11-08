@@ -13,9 +13,9 @@ module WebIDL
     class ExtendedAttributeArgList < Treetop::Runtime::SyntaxNode
       def build(parent)
         unless args.empty?
-          a = args.build(parent)
+          arguments = args.build(parent)
         end
-        Ast::ExtendedAttribute.new(name.text_value, a)
+        Ast::ExtendedAttribute.new(name.text_value, arguments)
       end
     end
 

@@ -16,6 +16,10 @@ module WebIDL
         end
       end
 
+      def accept(visitor, &blk)
+        visitor.send("visit_#{self.class.name.snake_case}", self, &blk)
+      end
+
     end # Node
   end # Ast
 end # WebIDL

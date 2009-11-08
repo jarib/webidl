@@ -121,6 +121,17 @@ describe WebIDL::Ast do
     interface.members.first.should be_kind_of(WebIDL::Ast::Operation)
   end
 
+  it "creates an interface with stringifier members" do
+    interface = parse(fixture("interface_with_stringifiers.idl")).build.first
+    interface.should be_kind_of(WebIDL::Ast::Interface)
+
+    interface.members.first.should be_kind_of(WebIDL::Ast::Attribute)
+    interface.members.first.should be_stringifier
+
+    interface.members.last.should be_kind_of(WebIDL::Ast::Operation)
+    interface.members.last.should be_stringifier
+  end
+
   it "creates an interface with inheritance" do
     interface = parse(fixture("interface_with_inheritance.idl")).build.last
     interface.inherits.should_not be_empty
@@ -198,6 +209,10 @@ describe WebIDL::Ast do
     impls.should be_kind_of(WebIDL::Ast::ImplementsStatement)
     impls.implementor.should == "::foo::bar"
     impls.implementee.should == "::foo::baz"
+  end
+
+  it "builds an AST from the HTML5 spec" do
+    parse(fixture("html5.idl")).build
   end
 
 end

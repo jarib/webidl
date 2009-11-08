@@ -3,7 +3,7 @@ module WebIDL
     class Attribute < Node
 
       attr_reader :type, :name, :getraises, :setraises
-      attr_accessor :extended_attributes
+      attr_accessor :extended_attributes, :stringifier
 
       def initialize(parent, type, name, opts = {})
         super(parent)
@@ -13,11 +13,15 @@ module WebIDL
         @readonly            = !!opts[:readonly]
         @setraises           = opts[:setraises] || []
         @getraises           = opts[:getraises] || []
-        @extanded_attributes = opts[:extanded_attributes] || []
+        @extended_attributes = opts[:extended_attributes] || []
       end
 
       def readonly?
         @readonly
+      end
+
+      def stringifier?
+        !!@stringifier
       end
 
     end # Attribute
