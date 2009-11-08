@@ -17,8 +17,6 @@ module WebIDL
         @inherits            = []
         @implements          = []
         @extended_attributes = []
-
-        Interface.list[qualified_name] = self
       end
 
     end

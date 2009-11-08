@@ -2,7 +2,7 @@ module WebIDL
   module ParseTree
 
     class ExtendedAttributeList < Treetop::Runtime::SyntaxNode
-      def build
+      def build(parent)
         list = [attribute.build(parent)]
         list += attributes.build(parent) unless attributes.empty?
 
@@ -12,7 +12,10 @@ module WebIDL
 
     class ExtendedAttributeArgList < Treetop::Runtime::SyntaxNode
       def build(parent)
-        Ast::ExtendedAttribute.new(name.text_value, args.build(parent))
+        unless args.empty?
+          a = args.build(parent)
+        end
+        Ast::ExtendedAttribute.new(name.text_value, a)
       end
     end
 

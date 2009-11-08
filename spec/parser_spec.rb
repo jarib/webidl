@@ -57,6 +57,7 @@ describe WebIDL::Parser::IDLParser do
   end
 
   it "parses the HTML5 DOM interface idl" do
+    parse(fixture("html5.idl")).build
     parse(fixture("html5.idl")).should_not be_nil
   end
 

@@ -25,7 +25,7 @@ module WebIDL
       end
 
       rule InterfaceInheritance
-        (":" ws name:ScopedNameList)?
+        (":" ws names:ScopedNameList <ParseTree::InterfaceInheritance>)?
       end
 
       # extract to a generic Members syntax node?
@@ -67,11 +67,11 @@ module WebIDL
       end
 
       rule AttributeOrOperation
-        "stringifier" ws StringifierAttributeOrOperation / Attribute / Operation
+        StringifierAttributeOrOperation / Attribute / Operation
       end
 
       rule StringifierAttributeOrOperation
-        Attribute / OperationRest / ";"
+        "stringifier" ws a_or_op:(Attribute / OperationRest / ";") <ParseTree::StringifierAttributeOrOperation>
       end
 
       rule Attribute
@@ -163,7 +163,7 @@ module WebIDL
       end
 
       rule ExtendedAttributes
-        ("," ws ExtendedAttribute ws ExtendedAttributes)?
+        ("," ws attribute:ExtendedAttribute ws attributes:ExtendedAttributes <ParseTree::ExtendedAttributeList>)?
       end
 
 
@@ -309,7 +309,7 @@ module WebIDL
       end
 
       rule ScopedNameList
-        ScopedName ws ScopedNames
+        name:ScopedName ws names:ScopedNames  <ParseTree::ScopedNameList>
       end
 
       rule ScopedNames

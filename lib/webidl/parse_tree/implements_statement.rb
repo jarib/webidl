@@ -9,12 +9,10 @@ module WebIDL
         implor_name = implementor.build(parent).qualified_name
         implee_name = implementee.build(parent).qualified_name
 
-        implor = Ast::Interface.list[implor_name] || raise("Unknown interface #{implor_name.inspect}")
-        implee = Ast::Interface.list[implee_name] || raise("Unknown interface #{implee_name.inspect}")
+        # implor = Ast::Interface.list[implor_name]
+        # implee = Ast::Interface.list[implee_name]
 
-        implor.implements << implee
-
-        nil
+        Ast::ImplementsStatement.new(parent, implor_name, implee_name)
       end
 
     end # ImplementsStatement

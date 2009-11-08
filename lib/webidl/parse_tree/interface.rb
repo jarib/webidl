@@ -10,7 +10,7 @@ module WebIDL
         end
 
         unless inherits.empty?
-          inherits.build(intf)
+          intf.inherits = inherits.build(parent)
         end
 
         intf

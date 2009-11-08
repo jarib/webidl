@@ -3,8 +3,9 @@ module WebIDL
     class InterfaceMembers < Treetop::Runtime::SyntaxNode
 
       def build(parent)
+        debugger unless member.respond_to?(:build)
         m = member.build(parent)
-        m.extended_attributes = eal.build unless eal.empty?
+        m.extended_attributes = eal.build(parent) unless eal.empty?
 
         list = [m]
         list += members.build(parent) unless members.empty?

@@ -6,15 +6,16 @@ module WebIDL
 
       def initialize(parent, name, opts = {})
         super(parent)
-        @name = name
+
+        @name     = name
         @relative = !!opts[:relative]
       end
 
       def qualified_name
-        if relative?
+        if relative? && @parent
           "#{@parent.qualified_name}::#{@name}"
         else
-          @name
+          "::#{@name}"
         end
       end
 

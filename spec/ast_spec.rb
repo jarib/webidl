@@ -121,6 +121,12 @@ describe WebIDL::Ast do
     interface.members.first.should be_kind_of(WebIDL::Ast::Operation)
   end
 
+  it "creates an interface with inheritance" do
+    interface = parse(fixture("interface_with_inheritance.idl")).build.last
+    interface.inherits.should_not be_empty
+    interface.inherits.first.qualified_name.should == "::foo"
+  end
+
   it "creates a framework from the example in the WebIDL spec" do
     mod = parse(fixture("framework.idl")).build.first
     mod.definitions.size.should == 4
@@ -175,11 +181,9 @@ describe WebIDL::Ast do
     first, last = interface.members
 
     first.should be_kind_of(WebIDL::Ast::Attribute)
-    last.should be_kind_of(WebIDL::Ast::Attribute)
-
     first.name.should == 'const'
 
-
+    last.should be_kind_of(WebIDL::Ast::Attribute)
     last.name.should == 'value'
     last.type.name.should == :DOMString
     last.type.should be_nullable
@@ -188,9 +192,12 @@ describe WebIDL::Ast do
   it "creates an implements statement" do
     mod = parse(fixture("module_with_implements_statement.idl")).build.first
 
-    interface = mod.definitions.first
-    interface.should be_kind_of(WebIDL::Ast::Interface)
-    interface.implements.should == [mod.definitions.last]
+    mod.definitions.first.should be_kind_of(WebIDL::Ast::Interface)
+
+    impls = mod.definitions.last
+    impls.should be_kind_of(WebIDL::Ast::ImplementsStatement)
+    impls.implementor.should == "::foo::bar"
+    impls.implementee.should == "::foo::baz"
   end
 
 end

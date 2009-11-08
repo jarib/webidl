@@ -22,6 +22,9 @@ require "webidl/parse_tree/specials"
 require "webidl/parse_tree/exception"
 require "webidl/parse_tree/exception_field"
 require "webidl/parse_tree/implements_statement"
+require "webidl/parse_tree/interface_inheritance"
+require "webidl/parse_tree/scoped_name_list"
+require "webidl/parse_tree/stringifier_attribute_or_operation"
 
 require "webidl/ast/node"
 require "webidl/ast/module"
@@ -36,7 +39,9 @@ require "webidl/ast/const"
 require "webidl/ast/exception"
 require "webidl/ast/attribute"
 require "webidl/ast/field"
+require "webidl/ast/implements_statement"
 
 require "webidl/parser/debug_helper"
 require "webidl/parser/idl"
-# Treetop.load("#{File.dirname(__FILE__)}/webidl/parser/idl")
+
+require "webidl/generator"
