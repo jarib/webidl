@@ -1,4 +1,3 @@
-require "webidl/generator/ruby_sexp_visitor"
 module WebIDL
   class Generator
 
@@ -16,7 +15,7 @@ module WebIDL
       end
 
       ast_defs = parse_tree.build
-      strings = ast_defs.map { |definition| ruby2ruby.process definition.accept(visitor) }
+      strings = ast_defs.map { |definition| ruby2ruby.process definition.accept(visitor) }.compact
       strings.join("\n\n")
     end
 

@@ -7,11 +7,10 @@ require 'spec'
 require 'spec/autorun'
 require "pp"
 
-require "ruby-debug"
-
-Debugger.start
-Debugger.settings[:autoeval] = true
-Debugger.settings[:autolist] = 1
+# require "ruby-debug"
+# Debugger.start
+# Debugger.settings[:autoeval] = true
+# Debugger.settings[:autolist] = 1
 
 module ParseHelper
   def parse(input)

@@ -45,3 +45,4 @@ require "webidl/parser/debug_helper"
 require "webidl/parser/idl"
 
 require "webidl/generator"
+require "webidl/generator/ruby_sexp_visitor"
