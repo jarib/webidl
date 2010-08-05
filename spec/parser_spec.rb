@@ -52,6 +52,14 @@ describe WebIDL::Parser::IDLParser do
     parse(str).should_not be_nil
   end
 
+  it "parses array types" do
+    str = <<-IDL
+      interface Bar { readonly attribute short[] foo; };
+    IDL
+
+    parse(str).should_not be_nil
+  end
+
   it "parses the WebSocket interface idl" do
     parse(fixture("websocket.idl")).should_not be_nil
   end

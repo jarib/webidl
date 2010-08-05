@@ -138,6 +138,17 @@ describe WebIDL::Ast do
     interface.inherits.first.qualified_name.should == "::foo"
   end
 
+  it "creates an interface with an array type member" do
+    interface = parse(fixture("interface_with_array_member.idl")).build.first
+    interface.should be_kind_of(WebIDL::Ast::Interface)
+
+    attr = interface.members.first
+    attr.should be_kind_of(WebIDL::Ast::Attribute)
+
+    attr.type.should be_kind_of(WebIDL::Ast::Type)
+    attr.type.name.should == :UnsignedShortArray
+  end
+
   it "creates a framework from the example in the WebIDL spec" do
     mod = parse(fixture("framework.idl")).build.first
     mod.definitions.size.should == 4
@@ -177,12 +188,12 @@ describe WebIDL::Ast do
     first.name.should == "ERR_NOT_FOUND"
     first.qualified_name.should == '::framework::FrameworkException::ERR_NOT_FOUND'
     first.type.should be_kind_of(WebIDL::Ast::Type)
-    first.type.name.should == :long
+    first.type.name.should == :Long
     first.value.should == 1
 
     last.should be_kind_of(WebIDL::Ast::Field)
     last.type.should be_kind_of(WebIDL::Ast::Type)
-    last.type.name.should == :long
+    last.type.name.should == :Long
     last.name.should == "code"
   end
 

@@ -228,35 +228,47 @@ module WebIDL
         / identifier
         / string
         / other
+        / "..."
         / ":"
         / "::"
         / ";"
         / "<"
         / "="
         / ">"
-        / "DOMString"
-        / "FALSE"
-        / "Object"
-        / "TRUE"
+        / "?"
+        / "false"
+        / "object"
+        / "true"
         / "any"
         / "attribute"
         / "boolean"
+        / "caller"
         / "const"
+        / "creator"
+        / "deleter"
+        / "double"
         / "exception"
         / "float"
         / "getraises"
+        / "getter"
+        / "implements"
         / "in"
         / "interface"
         / "long"
         / "module"
         / "octet"
+        / "omittable"
+        / "optional"
         / "raises"
         / "sequence"
         / "setraises"
+        / "setter"
         / "short"
+        / "DOMString"
+        / "stringifier"
         / "typedef"
         / "unsigned"
-        / "valuetype"
+        / "void"
       end
 
       rule OtherOrComma
@@ -264,10 +276,11 @@ module WebIDL
       end
 
       rule Type
-          NullableType
-        / ScopedName
-        / "any"
-        / "object"
+        type:(  NullableType
+          / ScopedName
+          / "any"     # not sure why these two are here, since
+          / "object"  # they will be caught by ScopedName anyway..
+        ) array:OptionalArray <ParseTree::Type> # { def build(parent) debugger end }
       end
 
       #
@@ -298,6 +311,14 @@ module WebIDL
 
       rule Nullable
         "?"?
+      end
+
+      #
+      # added: can't find anything about this in the spec's LL grammar
+      #
+
+      rule OptionalArray
+        "[]"?
       end
 
       rule NonSpace
