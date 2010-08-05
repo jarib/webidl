@@ -1,9 +1,0 @@
-require "autotest/redgreen"
-
-class Autotest
-
-  def tests_for_file(filename)
-    return Dir["spec/**/*_spec.rb"]
-  end
-
-end
