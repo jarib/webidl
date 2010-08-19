@@ -89,7 +89,7 @@ RUBY
     actual = generate(fixture("module_with_implements_statement.idl"))
     actual.should == expected
   end
-  
+
   it "generates code for no-name setters, getters, creators, stringifier and deleters" do
     expected = <<-RUBY
 module Foo
@@ -110,8 +110,16 @@ module Foo
   end
 end
 RUBY
-    
+
     actual = generate(fixture("interface_with_specials.idl"))
     actual.should == expected.strip
+  end
+
+  it "accepts an array of AST nodes or a single AST node as input" do
+    ast_nodes = parse(fixture("module_with_implements_statement.idl")).build
+
+
+    lambda { generate(ast_nodes.first)  }.should_not raise_error
+    lambda { generate(ast_nodes)  }.should_not raise_error
   end
 end
