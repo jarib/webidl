@@ -1,0 +1,4 @@
+[Constructor]
+interface LotteryResults {
+  readonly attribute unsigned short[] numbers;
+};

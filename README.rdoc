@@ -10,6 +10,10 @@ The code generation could be improved a lot - a lot of the data in the IDL is ju
 The parser rules for ExtendedAttribute is not exactly like the grammar from the Web IDL spec, since I ran into infinite recursion issues and don't have the Treetop-fu to figure them out.
 So far this hasn't led to any problems - the parser does parse the IDLs parts of the current HTML5 spec just fine.
 
+= Development tips
+
+While working on the grammar, delete the compiled parser (lib/webidl/parser/idl.rb) and make sure you do not have the webidl gem installed. When finished, compile the parser with `rake parser:compile`.
+
 = See also
 
 * http://dev.w3.org/2006/webapi/WebIDL/
@@ -28,4 +32,4 @@ So far this hasn't led to any problems - the parser does parse the IDLs parts of
 
 == Copyright
 
-Copyright (c) 2009 Jari Bakken. See LICENSE for details.
+Copyright (c) 2009-2010 Jari Bakken. See LICENSE for details.

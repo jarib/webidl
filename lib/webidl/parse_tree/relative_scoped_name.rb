@@ -7,7 +7,7 @@ module WebIDL
         n << name.text_value
         n << parts.text_value
 
-        sn = Ast::ScopedName.new(parent, n, :relative => true)
+        Ast::ScopedName.new(parent, n, :relative => true)
       end
 
     end # RelativeScopedName

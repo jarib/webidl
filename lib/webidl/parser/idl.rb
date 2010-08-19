@@ -9,7 +9,7 @@ module WebIDL
       include Treetop::Runtime
 
       def root
-        @root || :Definitions
+        @root ||= :Definitions
       end
 
       module Definitions0
@@ -52,7 +52,10 @@ module WebIDL
         start_index = index
         if node_cache[:Definitions].has_key?(index)
           cached = node_cache[:Definitions][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -114,7 +117,10 @@ module WebIDL
         start_index = index
         if node_cache[:Definition].has_key?(index)
           cached = node_cache[:Definition][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -187,7 +193,10 @@ module WebIDL
         start_index = index
         if node_cache[:Module].has_key?(index)
           cached = node_cache[:Module][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -314,7 +323,10 @@ module WebIDL
         start_index = index
         if node_cache[:Interface].has_key?(index)
           cached = node_cache[:Interface][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -420,7 +432,10 @@ module WebIDL
         start_index = index
         if node_cache[:InterfaceInheritance].has_key?(index)
           cached = node_cache[:InterfaceInheritance][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -489,7 +504,10 @@ module WebIDL
         start_index = index
         if node_cache[:InterfaceMembers].has_key?(index)
           cached = node_cache[:InterfaceMembers][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -538,7 +556,10 @@ module WebIDL
         start_index = index
         if node_cache[:InterfaceMember].has_key?(index)
           cached = node_cache[:InterfaceMember][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -596,7 +617,10 @@ module WebIDL
         start_index = index
         if node_cache[:Exception].has_key?(index)
           cached = node_cache[:Exception][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -710,7 +734,10 @@ module WebIDL
         start_index = index
         if node_cache[:ExceptionMembers].has_key?(index)
           cached = node_cache[:ExceptionMembers][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -782,7 +809,10 @@ module WebIDL
         start_index = index
         if node_cache[:TypeDef].has_key?(index)
           cached = node_cache[:TypeDef][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -865,7 +895,10 @@ module WebIDL
         start_index = index
         if node_cache[:ImplementsStatement].has_key?(index)
           cached = node_cache[:ImplementsStatement][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -960,7 +993,10 @@ module WebIDL
         start_index = index
         if node_cache[:Const].has_key?(index)
           cached = node_cache[:Const][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -1042,7 +1078,10 @@ module WebIDL
         start_index = index
         if node_cache[:ConstExpr].has_key?(index)
           cached = node_cache[:ConstExpr][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -1078,7 +1117,10 @@ module WebIDL
         start_index = index
         if node_cache[:BooleanLiteral].has_key?(index)
           cached = node_cache[:BooleanLiteral][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -1119,7 +1161,10 @@ module WebIDL
         start_index = index
         if node_cache[:AttributeOrOperation].has_key?(index)
           cached = node_cache[:AttributeOrOperation][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -1161,7 +1206,10 @@ module WebIDL
         start_index = index
         if node_cache[:StringifierAttributeOrOperation].has_key?(index)
           cached = node_cache[:StringifierAttributeOrOperation][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -1269,7 +1317,10 @@ module WebIDL
         start_index = index
         if node_cache[:Attribute].has_key?(index)
           cached = node_cache[:Attribute][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -1353,7 +1404,10 @@ module WebIDL
         start_index = index
         if node_cache[:ReadOnly].has_key?(index)
           cached = node_cache[:ReadOnly][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -1389,7 +1443,10 @@ module WebIDL
         start_index = index
         if node_cache[:GetRaises].has_key?(index)
           cached = node_cache[:GetRaises][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -1442,7 +1499,10 @@ module WebIDL
         start_index = index
         if node_cache[:SetRaises].has_key?(index)
           cached = node_cache[:SetRaises][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -1499,7 +1559,10 @@ module WebIDL
         start_index = index
         if node_cache[:Operation].has_key?(index)
           cached = node_cache[:Operation][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -1557,7 +1620,10 @@ module WebIDL
         start_index = index
         if node_cache[:OmittableSpecials].has_key?(index)
           cached = node_cache[:OmittableSpecials][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -1609,7 +1675,10 @@ module WebIDL
         start_index = index
         if node_cache[:Specials].has_key?(index)
           cached = node_cache[:Specials][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -1646,7 +1715,10 @@ module WebIDL
         start_index = index
         if node_cache[:Special].has_key?(index)
           cached = node_cache[:Special][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -1761,7 +1833,10 @@ module WebIDL
         start_index = index
         if node_cache[:OperationRest].has_key?(index)
           cached = node_cache[:OperationRest][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -1851,7 +1926,10 @@ module WebIDL
         start_index = index
         if node_cache[:OptionalIdentifier].has_key?(index)
           cached = node_cache[:OptionalIdentifier][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -1877,7 +1955,10 @@ module WebIDL
         start_index = index
         if node_cache[:Raises].has_key?(index)
           cached = node_cache[:Raises][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -1923,7 +2004,10 @@ module WebIDL
         start_index = index
         if node_cache[:ExceptionList].has_key?(index)
           cached = node_cache[:ExceptionList][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -1981,7 +2065,10 @@ module WebIDL
         start_index = index
         if node_cache[:ArgumentList].has_key?(index)
           cached = node_cache[:ArgumentList][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -2036,7 +2123,10 @@ module WebIDL
         start_index = index
         if node_cache[:Arguments].has_key?(index)
           cached = node_cache[:Arguments][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -2133,7 +2223,10 @@ module WebIDL
         start_index = index
         if node_cache[:Argument].has_key?(index)
           cached = node_cache[:Argument][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -2197,7 +2290,10 @@ module WebIDL
         start_index = index
         if node_cache[:In].has_key?(index)
           cached = node_cache[:In][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -2223,7 +2319,10 @@ module WebIDL
         start_index = index
         if node_cache[:Optional].has_key?(index)
           cached = node_cache[:Optional][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -2249,7 +2348,10 @@ module WebIDL
         start_index = index
         if node_cache[:Ellipsis].has_key?(index)
           cached = node_cache[:Ellipsis][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -2275,7 +2377,10 @@ module WebIDL
         start_index = index
         if node_cache[:ExceptionMember].has_key?(index)
           cached = node_cache[:ExceptionMember][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -2321,7 +2426,10 @@ module WebIDL
         start_index = index
         if node_cache[:ExceptionField].has_key?(index)
           cached = node_cache[:ExceptionField][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -2390,7 +2498,10 @@ module WebIDL
         start_index = index
         if node_cache[:ExtendedAttributeList].has_key?(index)
           cached = node_cache[:ExtendedAttributeList][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -2473,7 +2584,10 @@ module WebIDL
         start_index = index
         if node_cache[:ExtendedAttributes].has_key?(index)
           cached = node_cache[:ExtendedAttributes][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -2524,7 +2638,10 @@ module WebIDL
         start_index = index
         if node_cache[:ExtendedAttribute].has_key?(index)
           cached = node_cache[:ExtendedAttribute][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -2572,7 +2689,10 @@ module WebIDL
         start_index = index
         if node_cache[:ExtendedAttributeNoArg].has_key?(index)
           cached = node_cache[:ExtendedAttributeNoArg][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -2607,7 +2727,10 @@ module WebIDL
         start_index = index
         if node_cache[:ExtendedAttributeArgList].has_key?(index)
           cached = node_cache[:ExtendedAttributeArgList][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -2673,7 +2796,10 @@ module WebIDL
         start_index = index
         if node_cache[:ExtendedAttributeScopedName].has_key?(index)
           cached = node_cache[:ExtendedAttributeScopedName][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -2722,7 +2848,10 @@ module WebIDL
         start_index = index
         if node_cache[:ExtendedAttributeIdent].has_key?(index)
           cached = node_cache[:ExtendedAttributeIdent][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -2806,7 +2935,10 @@ module WebIDL
         start_index = index
         if node_cache[:ExtendedAttributeNamedArgList].has_key?(index)
           cached = node_cache[:ExtendedAttributeNamedArgList][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -2885,7 +3017,10 @@ module WebIDL
         start_index = index
         if node_cache[:Other].has_key?(index)
           cached = node_cache[:Other][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -2910,298 +3045,430 @@ module WebIDL
                 if r5
                   r0 = r5
                 else
-                  if has_terminal?(":", false, index)
-                    r6 = instantiate_node(SyntaxNode,input, index...(index + 1))
-                    @index += 1
+                  if has_terminal?("...", false, index)
+                    r6 = instantiate_node(SyntaxNode,input, index...(index + 3))
+                    @index += 3
                   else
-                    terminal_parse_failure(":")
+                    terminal_parse_failure("...")
                     r6 = nil
                   end
                   if r6
                     r0 = r6
                   else
-                    if has_terminal?("::", false, index)
-                      r7 = instantiate_node(SyntaxNode,input, index...(index + 2))
-                      @index += 2
+                    if has_terminal?(":", false, index)
+                      r7 = instantiate_node(SyntaxNode,input, index...(index + 1))
+                      @index += 1
                     else
-                      terminal_parse_failure("::")
+                      terminal_parse_failure(":")
                       r7 = nil
                     end
                     if r7
                       r0 = r7
                     else
-                      if has_terminal?(";", false, index)
-                        r8 = instantiate_node(SyntaxNode,input, index...(index + 1))
-                        @index += 1
+                      if has_terminal?("::", false, index)
+                        r8 = instantiate_node(SyntaxNode,input, index...(index + 2))
+                        @index += 2
                       else
-                        terminal_parse_failure(";")
+                        terminal_parse_failure("::")
                         r8 = nil
                       end
                       if r8
                         r0 = r8
                       else
-                        if has_terminal?("<", false, index)
+                        if has_terminal?(";", false, index)
                           r9 = instantiate_node(SyntaxNode,input, index...(index + 1))
                           @index += 1
                         else
-                          terminal_parse_failure("<")
+                          terminal_parse_failure(";")
                           r9 = nil
                         end
                         if r9
                           r0 = r9
                         else
-                          if has_terminal?("=", false, index)
+                          if has_terminal?("<", false, index)
                             r10 = instantiate_node(SyntaxNode,input, index...(index + 1))
                             @index += 1
                           else
-                            terminal_parse_failure("=")
+                            terminal_parse_failure("<")
                             r10 = nil
                           end
                           if r10
                             r0 = r10
                           else
-                            if has_terminal?(">", false, index)
+                            if has_terminal?("=", false, index)
                               r11 = instantiate_node(SyntaxNode,input, index...(index + 1))
                               @index += 1
                             else
-                              terminal_parse_failure(">")
+                              terminal_parse_failure("=")
                               r11 = nil
                             end
                             if r11
                               r0 = r11
                             else
-                              if has_terminal?("DOMString", false, index)
-                                r12 = instantiate_node(SyntaxNode,input, index...(index + 9))
-                                @index += 9
+                              if has_terminal?(">", false, index)
+                                r12 = instantiate_node(SyntaxNode,input, index...(index + 1))
+                                @index += 1
                               else
-                                terminal_parse_failure("DOMString")
+                                terminal_parse_failure(">")
                                 r12 = nil
                               end
                               if r12
                                 r0 = r12
                               else
-                                if has_terminal?("FALSE", false, index)
-                                  r13 = instantiate_node(SyntaxNode,input, index...(index + 5))
-                                  @index += 5
+                                if has_terminal?("?", false, index)
+                                  r13 = instantiate_node(SyntaxNode,input, index...(index + 1))
+                                  @index += 1
                                 else
-                                  terminal_parse_failure("FALSE")
+                                  terminal_parse_failure("?")
                                   r13 = nil
                                 end
                                 if r13
                                   r0 = r13
                                 else
-                                  if has_terminal?("Object", false, index)
-                                    r14 = instantiate_node(SyntaxNode,input, index...(index + 6))
-                                    @index += 6
+                                  if has_terminal?("false", false, index)
+                                    r14 = instantiate_node(SyntaxNode,input, index...(index + 5))
+                                    @index += 5
                                   else
-                                    terminal_parse_failure("Object")
+                                    terminal_parse_failure("false")
                                     r14 = nil
                                   end
                                   if r14
                                     r0 = r14
                                   else
-                                    if has_terminal?("TRUE", false, index)
-                                      r15 = instantiate_node(SyntaxNode,input, index...(index + 4))
-                                      @index += 4
+                                    if has_terminal?("object", false, index)
+                                      r15 = instantiate_node(SyntaxNode,input, index...(index + 6))
+                                      @index += 6
                                     else
-                                      terminal_parse_failure("TRUE")
+                                      terminal_parse_failure("object")
                                       r15 = nil
                                     end
                                     if r15
                                       r0 = r15
                                     else
-                                      if has_terminal?("any", false, index)
-                                        r16 = instantiate_node(SyntaxNode,input, index...(index + 3))
-                                        @index += 3
+                                      if has_terminal?("true", false, index)
+                                        r16 = instantiate_node(SyntaxNode,input, index...(index + 4))
+                                        @index += 4
                                       else
-                                        terminal_parse_failure("any")
+                                        terminal_parse_failure("true")
                                         r16 = nil
                                       end
                                       if r16
                                         r0 = r16
                                       else
-                                        if has_terminal?("attribute", false, index)
-                                          r17 = instantiate_node(SyntaxNode,input, index...(index + 9))
-                                          @index += 9
+                                        if has_terminal?("any", false, index)
+                                          r17 = instantiate_node(SyntaxNode,input, index...(index + 3))
+                                          @index += 3
                                         else
-                                          terminal_parse_failure("attribute")
+                                          terminal_parse_failure("any")
                                           r17 = nil
                                         end
                                         if r17
                                           r0 = r17
                                         else
-                                          if has_terminal?("boolean", false, index)
-                                            r18 = instantiate_node(SyntaxNode,input, index...(index + 7))
-                                            @index += 7
+                                          if has_terminal?("attribute", false, index)
+                                            r18 = instantiate_node(SyntaxNode,input, index...(index + 9))
+                                            @index += 9
                                           else
-                                            terminal_parse_failure("boolean")
+                                            terminal_parse_failure("attribute")
                                             r18 = nil
                                           end
                                           if r18
                                             r0 = r18
                                           else
-                                            if has_terminal?("const", false, index)
-                                              r19 = instantiate_node(SyntaxNode,input, index...(index + 5))
-                                              @index += 5
+                                            if has_terminal?("boolean", false, index)
+                                              r19 = instantiate_node(SyntaxNode,input, index...(index + 7))
+                                              @index += 7
                                             else
-                                              terminal_parse_failure("const")
+                                              terminal_parse_failure("boolean")
                                               r19 = nil
                                             end
                                             if r19
                                               r0 = r19
                                             else
-                                              if has_terminal?("exception", false, index)
-                                                r20 = instantiate_node(SyntaxNode,input, index...(index + 9))
-                                                @index += 9
+                                              if has_terminal?("caller", false, index)
+                                                r20 = instantiate_node(SyntaxNode,input, index...(index + 6))
+                                                @index += 6
                                               else
-                                                terminal_parse_failure("exception")
+                                                terminal_parse_failure("caller")
                                                 r20 = nil
                                               end
                                               if r20
                                                 r0 = r20
                                               else
-                                                if has_terminal?("float", false, index)
+                                                if has_terminal?("const", false, index)
                                                   r21 = instantiate_node(SyntaxNode,input, index...(index + 5))
                                                   @index += 5
                                                 else
-                                                  terminal_parse_failure("float")
+                                                  terminal_parse_failure("const")
                                                   r21 = nil
                                                 end
                                                 if r21
                                                   r0 = r21
                                                 else
-                                                  if has_terminal?("getraises", false, index)
-                                                    r22 = instantiate_node(SyntaxNode,input, index...(index + 9))
-                                                    @index += 9
+                                                  if has_terminal?("creator", false, index)
+                                                    r22 = instantiate_node(SyntaxNode,input, index...(index + 7))
+                                                    @index += 7
                                                   else
-                                                    terminal_parse_failure("getraises")
+                                                    terminal_parse_failure("creator")
                                                     r22 = nil
                                                   end
                                                   if r22
                                                     r0 = r22
                                                   else
-                                                    if has_terminal?("in", false, index)
-                                                      r23 = instantiate_node(SyntaxNode,input, index...(index + 2))
-                                                      @index += 2
+                                                    if has_terminal?("deleter", false, index)
+                                                      r23 = instantiate_node(SyntaxNode,input, index...(index + 7))
+                                                      @index += 7
                                                     else
-                                                      terminal_parse_failure("in")
+                                                      terminal_parse_failure("deleter")
                                                       r23 = nil
                                                     end
                                                     if r23
                                                       r0 = r23
                                                     else
-                                                      if has_terminal?("interface", false, index)
-                                                        r24 = instantiate_node(SyntaxNode,input, index...(index + 9))
-                                                        @index += 9
+                                                      if has_terminal?("double", false, index)
+                                                        r24 = instantiate_node(SyntaxNode,input, index...(index + 6))
+                                                        @index += 6
                                                       else
-                                                        terminal_parse_failure("interface")
+                                                        terminal_parse_failure("double")
                                                         r24 = nil
                                                       end
                                                       if r24
                                                         r0 = r24
                                                       else
-                                                        if has_terminal?("long", false, index)
-                                                          r25 = instantiate_node(SyntaxNode,input, index...(index + 4))
-                                                          @index += 4
+                                                        if has_terminal?("exception", false, index)
+                                                          r25 = instantiate_node(SyntaxNode,input, index...(index + 9))
+                                                          @index += 9
                                                         else
-                                                          terminal_parse_failure("long")
+                                                          terminal_parse_failure("exception")
                                                           r25 = nil
                                                         end
                                                         if r25
                                                           r0 = r25
                                                         else
-                                                          if has_terminal?("module", false, index)
-                                                            r26 = instantiate_node(SyntaxNode,input, index...(index + 6))
-                                                            @index += 6
+                                                          if has_terminal?("float", false, index)
+                                                            r26 = instantiate_node(SyntaxNode,input, index...(index + 5))
+                                                            @index += 5
                                                           else
-                                                            terminal_parse_failure("module")
+                                                            terminal_parse_failure("float")
                                                             r26 = nil
                                                           end
                                                           if r26
                                                             r0 = r26
                                                           else
-                                                            if has_terminal?("octet", false, index)
-                                                              r27 = instantiate_node(SyntaxNode,input, index...(index + 5))
-                                                              @index += 5
+                                                            if has_terminal?("getraises", false, index)
+                                                              r27 = instantiate_node(SyntaxNode,input, index...(index + 9))
+                                                              @index += 9
                                                             else
-                                                              terminal_parse_failure("octet")
+                                                              terminal_parse_failure("getraises")
                                                               r27 = nil
                                                             end
                                                             if r27
                                                               r0 = r27
                                                             else
-                                                              if has_terminal?("raises", false, index)
+                                                              if has_terminal?("getter", false, index)
                                                                 r28 = instantiate_node(SyntaxNode,input, index...(index + 6))
                                                                 @index += 6
                                                               else
-                                                                terminal_parse_failure("raises")
+                                                                terminal_parse_failure("getter")
                                                                 r28 = nil
                                                               end
                                                               if r28
                                                                 r0 = r28
                                                               else
-                                                                if has_terminal?("sequence", false, index)
-                                                                  r29 = instantiate_node(SyntaxNode,input, index...(index + 8))
-                                                                  @index += 8
+                                                                if has_terminal?("implements", false, index)
+                                                                  r29 = instantiate_node(SyntaxNode,input, index...(index + 10))
+                                                                  @index += 10
                                                                 else
-                                                                  terminal_parse_failure("sequence")
+                                                                  terminal_parse_failure("implements")
                                                                   r29 = nil
                                                                 end
                                                                 if r29
                                                                   r0 = r29
                                                                 else
-                                                                  if has_terminal?("setraises", false, index)
-                                                                    r30 = instantiate_node(SyntaxNode,input, index...(index + 9))
-                                                                    @index += 9
+                                                                  if has_terminal?("in", false, index)
+                                                                    r30 = instantiate_node(SyntaxNode,input, index...(index + 2))
+                                                                    @index += 2
                                                                   else
-                                                                    terminal_parse_failure("setraises")
+                                                                    terminal_parse_failure("in")
                                                                     r30 = nil
                                                                   end
                                                                   if r30
                                                                     r0 = r30
                                                                   else
-                                                                    if has_terminal?("short", false, index)
-                                                                      r31 = instantiate_node(SyntaxNode,input, index...(index + 5))
-                                                                      @index += 5
+                                                                    if has_terminal?("interface", false, index)
+                                                                      r31 = instantiate_node(SyntaxNode,input, index...(index + 9))
+                                                                      @index += 9
                                                                     else
-                                                                      terminal_parse_failure("short")
+                                                                      terminal_parse_failure("interface")
                                                                       r31 = nil
                                                                     end
                                                                     if r31
                                                                       r0 = r31
                                                                     else
-                                                                      if has_terminal?("typedef", false, index)
-                                                                        r32 = instantiate_node(SyntaxNode,input, index...(index + 7))
-                                                                        @index += 7
+                                                                      if has_terminal?("long", false, index)
+                                                                        r32 = instantiate_node(SyntaxNode,input, index...(index + 4))
+                                                                        @index += 4
                                                                       else
-                                                                        terminal_parse_failure("typedef")
+                                                                        terminal_parse_failure("long")
                                                                         r32 = nil
                                                                       end
                                                                       if r32
                                                                         r0 = r32
                                                                       else
-                                                                        if has_terminal?("unsigned", false, index)
-                                                                          r33 = instantiate_node(SyntaxNode,input, index...(index + 8))
-                                                                          @index += 8
+                                                                        if has_terminal?("module", false, index)
+                                                                          r33 = instantiate_node(SyntaxNode,input, index...(index + 6))
+                                                                          @index += 6
                                                                         else
-                                                                          terminal_parse_failure("unsigned")
+                                                                          terminal_parse_failure("module")
                                                                           r33 = nil
                                                                         end
                                                                         if r33
                                                                           r0 = r33
                                                                         else
-                                                                          if has_terminal?("valuetype", false, index)
-                                                                            r34 = instantiate_node(SyntaxNode,input, index...(index + 9))
-                                                                            @index += 9
+                                                                          if has_terminal?("octet", false, index)
+                                                                            r34 = instantiate_node(SyntaxNode,input, index...(index + 5))
+                                                                            @index += 5
                                                                           else
-                                                                            terminal_parse_failure("valuetype")
+                                                                            terminal_parse_failure("octet")
                                                                             r34 = nil
                                                                           end
                                                                           if r34
                                                                             r0 = r34
                                                                           else
-                                                                            @index = i0
-                                                                            r0 = nil
+                                                                            if has_terminal?("omittable", false, index)
+                                                                              r35 = instantiate_node(SyntaxNode,input, index...(index + 9))
+                                                                              @index += 9
+                                                                            else
+                                                                              terminal_parse_failure("omittable")
+                                                                              r35 = nil
+                                                                            end
+                                                                            if r35
+                                                                              r0 = r35
+                                                                            else
+                                                                              if has_terminal?("optional", false, index)
+                                                                                r36 = instantiate_node(SyntaxNode,input, index...(index + 8))
+                                                                                @index += 8
+                                                                              else
+                                                                                terminal_parse_failure("optional")
+                                                                                r36 = nil
+                                                                              end
+                                                                              if r36
+                                                                                r0 = r36
+                                                                              else
+                                                                                if has_terminal?("raises", false, index)
+                                                                                  r37 = instantiate_node(SyntaxNode,input, index...(index + 6))
+                                                                                  @index += 6
+                                                                                else
+                                                                                  terminal_parse_failure("raises")
+                                                                                  r37 = nil
+                                                                                end
+                                                                                if r37
+                                                                                  r0 = r37
+                                                                                else
+                                                                                  if has_terminal?("sequence", false, index)
+                                                                                    r38 = instantiate_node(SyntaxNode,input, index...(index + 8))
+                                                                                    @index += 8
+                                                                                  else
+                                                                                    terminal_parse_failure("sequence")
+                                                                                    r38 = nil
+                                                                                  end
+                                                                                  if r38
+                                                                                    r0 = r38
+                                                                                  else
+                                                                                    if has_terminal?("setraises", false, index)
+                                                                                      r39 = instantiate_node(SyntaxNode,input, index...(index + 9))
+                                                                                      @index += 9
+                                                                                    else
+                                                                                      terminal_parse_failure("setraises")
+                                                                                      r39 = nil
+                                                                                    end
+                                                                                    if r39
+                                                                                      r0 = r39
+                                                                                    else
+                                                                                      if has_terminal?("setter", false, index)
+                                                                                        r40 = instantiate_node(SyntaxNode,input, index...(index + 6))
+                                                                                        @index += 6
+                                                                                      else
+                                                                                        terminal_parse_failure("setter")
+                                                                                        r40 = nil
+                                                                                      end
+                                                                                      if r40
+                                                                                        r0 = r40
+                                                                                      else
+                                                                                        if has_terminal?("short", false, index)
+                                                                                          r41 = instantiate_node(SyntaxNode,input, index...(index + 5))
+                                                                                          @index += 5
+                                                                                        else
+                                                                                          terminal_parse_failure("short")
+                                                                                          r41 = nil
+                                                                                        end
+                                                                                        if r41
+                                                                                          r0 = r41
+                                                                                        else
+                                                                                          if has_terminal?("DOMString", false, index)
+                                                                                            r42 = instantiate_node(SyntaxNode,input, index...(index + 9))
+                                                                                            @index += 9
+                                                                                          else
+                                                                                            terminal_parse_failure("DOMString")
+                                                                                            r42 = nil
+                                                                                          end
+                                                                                          if r42
+                                                                                            r0 = r42
+                                                                                          else
+                                                                                            if has_terminal?("stringifier", false, index)
+                                                                                              r43 = instantiate_node(SyntaxNode,input, index...(index + 11))
+                                                                                              @index += 11
+                                                                                            else
+                                                                                              terminal_parse_failure("stringifier")
+                                                                                              r43 = nil
+                                                                                            end
+                                                                                            if r43
+                                                                                              r0 = r43
+                                                                                            else
+                                                                                              if has_terminal?("typedef", false, index)
+                                                                                                r44 = instantiate_node(SyntaxNode,input, index...(index + 7))
+                                                                                                @index += 7
+                                                                                              else
+                                                                                                terminal_parse_failure("typedef")
+                                                                                                r44 = nil
+                                                                                              end
+                                                                                              if r44
+                                                                                                r0 = r44
+                                                                                              else
+                                                                                                if has_terminal?("unsigned", false, index)
+                                                                                                  r45 = instantiate_node(SyntaxNode,input, index...(index + 8))
+                                                                                                  @index += 8
+                                                                                                else
+                                                                                                  terminal_parse_failure("unsigned")
+                                                                                                  r45 = nil
+                                                                                                end
+                                                                                                if r45
+                                                                                                  r0 = r45
+                                                                                                else
+                                                                                                  if has_terminal?("void", false, index)
+                                                                                                    r46 = instantiate_node(SyntaxNode,input, index...(index + 4))
+                                                                                                    @index += 4
+                                                                                                  else
+                                                                                                    terminal_parse_failure("void")
+                                                                                                    r46 = nil
+                                                                                                  end
+                                                                                                  if r46
+                                                                                                    r0 = r46
+                                                                                                  else
+                                                                                                    @index = i0
+                                                                                                    r0 = nil
+                                                                                                  end
+                                                                                                end
+                                                                                              end
+                                                                                            end
+                                                                                          end
+                                                                                        end
+                                                                                      end
+                                                                                    end
+                                                                                  end
+                                                                                end
+                                                                              end
+                                                                            end
                                                                           end
                                                                         end
                                                                       end
@@ -3246,7 +3513,10 @@ module WebIDL
         start_index = index
         if node_cache[:OtherOrComma].has_key?(index)
           cached = node_cache[:OtherOrComma][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -3275,48 +3545,74 @@ module WebIDL
         r0
       end
 
+      module Type0
+        def type
+          elements[0]
+        end
+
+        def array
+          elements[1]
+        end
+      end
+
       def _nt_Type
         start_index = index
         if node_cache[:Type].has_key?(index)
           cached = node_cache[:Type][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
-        i0 = index
-        r1 = _nt_NullableType
-        if r1
-          r0 = r1
+        i0, s0 = index, []
+        i1 = index
+        r2 = _nt_NullableType
+        if r2
+          r1 = r2
         else
-          r2 = _nt_ScopedName
-          if r2
-            r0 = r2
+          r3 = _nt_ScopedName
+          if r3
+            r1 = r3
           else
             if has_terminal?("any", false, index)
-              r3 = instantiate_node(SyntaxNode,input, index...(index + 3))
+              r4 = instantiate_node(SyntaxNode,input, index...(index + 3))
               @index += 3
             else
               terminal_parse_failure("any")
-              r3 = nil
+              r4 = nil
             end
-            if r3
-              r0 = r3
+            if r4
+              r1 = r4
             else
               if has_terminal?("object", false, index)
-                r4 = instantiate_node(SyntaxNode,input, index...(index + 6))
+                r5 = instantiate_node(SyntaxNode,input, index...(index + 6))
                 @index += 6
               else
                 terminal_parse_failure("object")
-                r4 = nil
+                r5 = nil
               end
-              if r4
-                r0 = r4
+              if r5
+                r1 = r5
               else
-                @index = i0
-                r0 = nil
+                @index = i1
+                r1 = nil
               end
             end
           end
+        end
+        s0 << r1
+        if r1
+          r6 = _nt_OptionalArray
+          s0 << r6
+        end
+        if s0.last
+          r0 = instantiate_node(ParseTree::Type,input, i0...index, s0)
+          r0.extend(Type0)
+        else
+          @index = i0
+          r0 = nil
         end
 
         node_cache[:Type][start_index] = r0
@@ -3420,7 +3716,10 @@ module WebIDL
         start_index = index
         if node_cache[:NullableType].has_key?(index)
           cached = node_cache[:NullableType][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -3711,7 +4010,10 @@ module WebIDL
         start_index = index
         if node_cache[:UnsignedIntegerType].has_key?(index)
           cached = node_cache[:UnsignedIntegerType][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -3771,7 +4073,10 @@ module WebIDL
         start_index = index
         if node_cache[:IntegerType].has_key?(index)
           cached = node_cache[:IntegerType][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -3827,7 +4132,10 @@ module WebIDL
         start_index = index
         if node_cache[:OptionalLong].has_key?(index)
           cached = node_cache[:OptionalLong][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -3853,7 +4161,10 @@ module WebIDL
         start_index = index
         if node_cache[:Nullable].has_key?(index)
           cached = node_cache[:Nullable][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -3875,6 +4186,35 @@ module WebIDL
         r0
       end
 
+      def _nt_OptionalArray
+        start_index = index
+        if node_cache[:OptionalArray].has_key?(index)
+          cached = node_cache[:OptionalArray][index]
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
+          return cached
+        end
+
+        if has_terminal?("[]", false, index)
+          r1 = instantiate_node(SyntaxNode,input, index...(index + 2))
+          @index += 2
+        else
+          terminal_parse_failure("[]")
+          r1 = nil
+        end
+        if r1
+          r0 = r1
+        else
+          r0 = instantiate_node(SyntaxNode,input, index...index)
+        end
+
+        node_cache[:OptionalArray][start_index] = r0
+
+        r0
+      end
+
       module NonSpace0
       end
 
@@ -3882,7 +4222,10 @@ module WebIDL
         start_index = index
         if node_cache[:NonSpace].has_key?(index)
           cached = node_cache[:NonSpace][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -3929,7 +4272,10 @@ module WebIDL
         start_index = index
         if node_cache[:ReturnType].has_key?(index)
           cached = node_cache[:ReturnType][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -3976,7 +4322,10 @@ module WebIDL
         start_index = index
         if node_cache[:ScopedNameList].has_key?(index)
           cached = node_cache[:ScopedNameList][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -4022,7 +4371,10 @@ module WebIDL
         start_index = index
         if node_cache[:ScopedNames].has_key?(index)
           cached = node_cache[:ScopedNames][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -4069,7 +4421,10 @@ module WebIDL
         start_index = index
         if node_cache[:ScopedName].has_key?(index)
           cached = node_cache[:ScopedName][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -4106,7 +4461,10 @@ module WebIDL
         start_index = index
         if node_cache[:AbsoluteScopedName].has_key?(index)
           cached = node_cache[:AbsoluteScopedName][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -4154,7 +4512,10 @@ module WebIDL
         start_index = index
         if node_cache[:RelativeScopedName].has_key?(index)
           cached = node_cache[:RelativeScopedName][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -4196,7 +4557,10 @@ module WebIDL
         start_index = index
         if node_cache[:ScopedNameParts].has_key?(index)
           cached = node_cache[:ScopedNameParts][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -4256,7 +4620,10 @@ module WebIDL
         start_index = index
         if node_cache[:integer].has_key?(index)
           cached = node_cache[:integer][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -4433,7 +4800,10 @@ module WebIDL
         start_index = index
         if node_cache[:float].has_key?(index)
           cached = node_cache[:float][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -4751,7 +5121,10 @@ module WebIDL
         start_index = index
         if node_cache[:identifier].has_key?(index)
           cached = node_cache[:identifier][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -4802,7 +5175,10 @@ module WebIDL
         start_index = index
         if node_cache[:string].has_key?(index)
           cached = node_cache[:string][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -4866,7 +5242,10 @@ module WebIDL
         start_index = index
         if node_cache[:ws].has_key?(index)
           cached = node_cache[:ws][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -4997,7 +5376,10 @@ module WebIDL
         start_index = index
         if node_cache[:other].has_key?(index)
           cached = node_cache[:other][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -5023,7 +5405,10 @@ module WebIDL
         start_index = index
         if node_cache[:line_comment].has_key?(index)
           cached = node_cache[:line_comment][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
@@ -5103,7 +5488,10 @@ module WebIDL
         start_index = index
         if node_cache[:block_comment].has_key?(index)
           cached = node_cache[:block_comment][index]
-          @index = cached.interval.end if cached
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
           return cached
         end
 
