@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{webidl}
-  s.version = "0.0.4"
+  s.version = "0.0.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jari Bakken"]
-  s.date = %q{2010-08-19}
+  s.date = %q{2010-08-20}
   s.default_executable = %q{webidl2ruby}
   s.description = %q{Built on Treetop, this gem will parse an interface declaration in WebIDL and generate ruby code}
   s.email = %q{jari.bakken@gmail.com}
@@ -105,9 +105,9 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{WebIDL parser/generator for ruby}
   s.test_files = [
-    "spec/ast_spec.rb",
+    "spec/parser_spec.rb",
+     "spec/ast_spec.rb",
      "spec/generator_spec.rb",
-     "spec/parser_spec.rb",
      "spec/spec_helper.rb",
      "examples/html5.rb"
   ]
