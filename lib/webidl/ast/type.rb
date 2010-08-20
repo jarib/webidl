@@ -22,7 +22,7 @@ module WebIDL
       private
 
       def camel_case_type(name)
-        name.split(/[_ ]/).map { |e| e[0] = e[0].upcase; e }.join
+        name.split(/[_ ]/).map { |e| e[0,1] = e[0,1].upcase; e }.join
       end
 
     end # Type
