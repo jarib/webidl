@@ -1,7 +1,7 @@
 module framework {
   // Exception identifier: "FrameworkException"
   // Qualified name:       "::framework::FrameworkException"
-  exception FrameworkException {
+  [Supplemental] exception FrameworkException {
 
     // Constant identifier: "ERR_NOT_FOUND"
     // Qualified name:      "::framework::FrameworkException::ERR_NOT_FOUND"

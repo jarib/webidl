@@ -182,6 +182,9 @@ describe WebIDL::Ast do
     ex.qualified_name.should == '::framework::FrameworkException'
     ex.members.size.should == 2
 
+    xattr = ex.extended_attributes
+    xattr.first.name.should == "Supplemental"
+
     first, last = ex.members
 
     first.should be_kind_of(WebIDL::Ast::Const)
