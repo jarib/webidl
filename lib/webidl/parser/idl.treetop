@@ -280,7 +280,7 @@ module WebIDL
           / ScopedName
           / "any"     # not sure why these two are here, since
           / "object"  # they will be caught by ScopedName anyway..
-        ) array:OptionalArray <ParseTree::Type>
+        ) array:Array <ParseTree::Type>
       end
 
       #
@@ -313,11 +313,7 @@ module WebIDL
         "?"?
       end
 
-      #
-      # added: can't find anything about this in the spec's LL grammar
-      #
-
-      rule OptionalArray
+      rule Array
         "[]"?
       end
 
