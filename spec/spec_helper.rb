@@ -3,8 +3,7 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
 require "rubygems"
 require 'webidl'
-require 'spec'
-require 'spec/autorun'
+require 'rspec'
 require "pp"
 
 # require "ruby-debug"
@@ -36,7 +35,7 @@ module ParseHelper
   end
 end
 
-Spec::Runner.configure do |c|
+RSpec.configure do |c|
   c.include(ParseHelper)
   c.before(:each) do
     @parser = WebIDL::Parser::IDLParser.new
