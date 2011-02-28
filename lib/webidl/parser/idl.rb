@@ -4186,6 +4186,13 @@ module WebIDL
         r0
       end
 
+      module Array0
+        def ws
+          elements[1]
+        end
+
+      end
+
       def _nt_Array
         start_index = index
         if node_cache[:Array].has_key?(index)
@@ -4197,11 +4204,34 @@ module WebIDL
           return cached
         end
 
-        if has_terminal?("[]", false, index)
-          r1 = instantiate_node(SyntaxNode,input, index...(index + 2))
-          @index += 2
+        i1, s1 = index, []
+        if has_terminal?("[", false, index)
+          r2 = instantiate_node(SyntaxNode,input, index...(index + 1))
+          @index += 1
         else
-          terminal_parse_failure("[]")
+          terminal_parse_failure("[")
+          r2 = nil
+        end
+        s1 << r2
+        if r2
+          r3 = _nt_ws
+          s1 << r3
+          if r3
+            if has_terminal?("]", false, index)
+              r4 = instantiate_node(SyntaxNode,input, index...(index + 1))
+              @index += 1
+            else
+              terminal_parse_failure("]")
+              r4 = nil
+            end
+            s1 << r4
+          end
+        end
+        if s1.last
+          r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
+          r1.extend(Array0)
+        else
+          @index = i1
           r1 = nil
         end
         if r1

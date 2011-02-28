@@ -314,7 +314,7 @@ module WebIDL
       end
 
       rule Array
-        "[]"?
+        ("[" ws "]")?
       end
 
       rule NonSpace

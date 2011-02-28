@@ -54,7 +54,10 @@ describe WebIDL::Parser::IDLParser do
 
   it "parses array types" do
     str = <<-IDL
-      interface Bar { readonly attribute short[] foo; };
+      interface Bar {
+        readonly attribute short[] foo;
+        readonly attribute short[ ] bar;
+      };
     IDL
 
     parse(str).should_not be_nil
