@@ -3604,7 +3604,7 @@ module WebIDL
         end
         s0 << r1
         if r1
-          r6 = _nt_OptionalArray
+          r6 = _nt_Array
           s0 << r6
         end
         if s0.last
@@ -4186,10 +4186,10 @@ module WebIDL
         r0
       end
 
-      def _nt_OptionalArray
+      def _nt_Array
         start_index = index
-        if node_cache[:OptionalArray].has_key?(index)
-          cached = node_cache[:OptionalArray][index]
+        if node_cache[:Array].has_key?(index)
+          cached = node_cache[:Array][index]
           if cached
             cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
             @index = cached.interval.end
@@ -4210,7 +4210,7 @@ module WebIDL
           r0 = instantiate_node(SyntaxNode,input, index...index)
         end
 
-        node_cache[:OptionalArray][start_index] = r0
+        node_cache[:Array][start_index] = r0
 
         r0
       end
@@ -4604,15 +4604,6 @@ module WebIDL
       end
 
       module Integer0
-      end
-
-      module Integer1
-      end
-
-      module Integer2
-      end
-
-      module Integer3
         def build() Integer(text_value) end
       end
 
@@ -4628,151 +4619,244 @@ module WebIDL
         end
 
         i0 = index
-        i1, s1 = index, []
-        if has_terminal?("-", false, index)
-          r3 = instantiate_node(SyntaxNode,input, index...(index + 1))
-          @index += 1
-        else
-          terminal_parse_failure("-")
-          r3 = nil
-        end
-        if r3
-          r2 = r3
-        else
-          r2 = instantiate_node(SyntaxNode,input, index...index)
-        end
-        s1 << r2
-        if r2
-          if has_terminal?("0", false, index)
-            r4 = instantiate_node(SyntaxNode,input, index...(index + 1))
-            @index += 1
-          else
-            terminal_parse_failure("0")
-            r4 = nil
-          end
-          s1 << r4
-          if r4
-            i5 = index
-            s6, i6 = [], index
-            loop do
-              if has_terminal?('\G[0-7]', true, index)
-                r7 = true
-                @index += 1
-              else
-                r7 = nil
-              end
-              if r7
-                s6 << r7
-              else
-                break
-              end
-            end
-            r6 = instantiate_node(SyntaxNode,input, i6...index, s6)
-            if r6
-              r5 = r6
-            else
-              i8, s8 = index, []
-              if has_terminal?('\G[Xx]', true, index)
-                r9 = true
-                @index += 1
-              else
-                r9 = nil
-              end
-              s8 << r9
-              if r9
-                s10, i10 = [], index
-                loop do
-                  if has_terminal?('\G[0-9A-Fa-f]', true, index)
-                    r11 = true
-                    @index += 1
-                  else
-                    r11 = nil
-                  end
-                  if r11
-                    s10 << r11
-                  else
-                    break
-                  end
-                end
-                if s10.empty?
-                  @index = i10
-                  r10 = nil
-                else
-                  r10 = instantiate_node(SyntaxNode,input, i10...index, s10)
-                end
-                s8 << r10
-              end
-              if s8.last
-                r8 = instantiate_node(SyntaxNode,input, i8...index, s8)
-                r8.extend(Integer0)
-              else
-                @index = i8
-                r8 = nil
-              end
-              if r8
-                r5 = r8
-              else
-                @index = i5
-                r5 = nil
-              end
-            end
-            s1 << r5
-          end
-        end
-        if s1.last
-          r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
-          r1.extend(Integer1)
-        else
-          @index = i1
-          r1 = nil
-        end
+        r1 = _nt_hexint
         if r1
           r0 = r1
-          r0.extend(Integer3)
+          r0.extend(Integer0)
         else
-          i12, s12 = index, []
-          if has_terminal?('\G[1-9]', true, index)
-            r13 = true
-            @index += 1
+          r2 = _nt_octint
+          if r2
+            r0 = r2
+            r0.extend(Integer0)
           else
-            r13 = nil
-          end
-          s12 << r13
-          if r13
-            s14, i14 = [], index
-            loop do
-              if has_terminal?('\G[0-9]', true, index)
-                r15 = true
-                @index += 1
-              else
-                r15 = nil
-              end
-              if r15
-                s14 << r15
-              else
-                break
-              end
+            r3 = _nt_decint
+            if r3
+              r0 = r3
+              r0.extend(Integer0)
+            else
+              @index = i0
+              r0 = nil
             end
-            r14 = instantiate_node(SyntaxNode,input, i14...index, s14)
-            s12 << r14
-          end
-          if s12.last
-            r12 = instantiate_node(SyntaxNode,input, i12...index, s12)
-            r12.extend(Integer2)
-          else
-            @index = i12
-            r12 = nil
-          end
-          if r12
-            r0 = r12
-            r0.extend(Integer3)
-          else
-            @index = i0
-            r0 = nil
           end
         end
 
         node_cache[:integer][start_index] = r0
+
+        r0
+      end
+
+      module Hexint0
+      end
+
+      def _nt_hexint
+        start_index = index
+        if node_cache[:hexint].has_key?(index)
+          cached = node_cache[:hexint][index]
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
+          return cached
+        end
+
+        i0, s0 = index, []
+        if has_terminal?("-", false, index)
+          r2 = instantiate_node(SyntaxNode,input, index...(index + 1))
+          @index += 1
+        else
+          terminal_parse_failure("-")
+          r2 = nil
+        end
+        if r2
+          r1 = r2
+        else
+          r1 = instantiate_node(SyntaxNode,input, index...index)
+        end
+        s0 << r1
+        if r1
+          if has_terminal?("0", false, index)
+            r3 = instantiate_node(SyntaxNode,input, index...(index + 1))
+            @index += 1
+          else
+            terminal_parse_failure("0")
+            r3 = nil
+          end
+          s0 << r3
+          if r3
+            if has_terminal?('\G[Xx]', true, index)
+              r4 = true
+              @index += 1
+            else
+              r4 = nil
+            end
+            s0 << r4
+            if r4
+              s5, i5 = [], index
+              loop do
+                if has_terminal?('\G[0-9A-Fa-f]', true, index)
+                  r6 = true
+                  @index += 1
+                else
+                  r6 = nil
+                end
+                if r6
+                  s5 << r6
+                else
+                  break
+                end
+              end
+              if s5.empty?
+                @index = i5
+                r5 = nil
+              else
+                r5 = instantiate_node(SyntaxNode,input, i5...index, s5)
+              end
+              s0 << r5
+            end
+          end
+        end
+        if s0.last
+          r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
+          r0.extend(Hexint0)
+        else
+          @index = i0
+          r0 = nil
+        end
+
+        node_cache[:hexint][start_index] = r0
+
+        r0
+      end
+
+      module Octint0
+      end
+
+      def _nt_octint
+        start_index = index
+        if node_cache[:octint].has_key?(index)
+          cached = node_cache[:octint][index]
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
+          return cached
+        end
+
+        i0, s0 = index, []
+        if has_terminal?("-", false, index)
+          r2 = instantiate_node(SyntaxNode,input, index...(index + 1))
+          @index += 1
+        else
+          terminal_parse_failure("-")
+          r2 = nil
+        end
+        if r2
+          r1 = r2
+        else
+          r1 = instantiate_node(SyntaxNode,input, index...index)
+        end
+        s0 << r1
+        if r1
+          if has_terminal?("0", false, index)
+            r3 = instantiate_node(SyntaxNode,input, index...(index + 1))
+            @index += 1
+          else
+            terminal_parse_failure("0")
+            r3 = nil
+          end
+          s0 << r3
+          if r3
+            s4, i4 = [], index
+            loop do
+              if has_terminal?('\G[0-7]', true, index)
+                r5 = true
+                @index += 1
+              else
+                r5 = nil
+              end
+              if r5
+                s4 << r5
+              else
+                break
+              end
+            end
+            if s4.empty?
+              @index = i4
+              r4 = nil
+            else
+              r4 = instantiate_node(SyntaxNode,input, i4...index, s4)
+            end
+            s0 << r4
+          end
+        end
+        if s0.last
+          r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
+          r0.extend(Octint0)
+        else
+          @index = i0
+          r0 = nil
+        end
+
+        node_cache[:octint][start_index] = r0
+
+        r0
+      end
+
+      module Decint0
+      end
+
+      def _nt_decint
+        start_index = index
+        if node_cache[:decint].has_key?(index)
+          cached = node_cache[:decint][index]
+          if cached
+            cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
+          return cached
+        end
+
+        i0, s0 = index, []
+        if has_terminal?("-", false, index)
+          r2 = instantiate_node(SyntaxNode,input, index...(index + 1))
+          @index += 1
+        else
+          terminal_parse_failure("-")
+          r2 = nil
+        end
+        if r2
+          r1 = r2
+        else
+          r1 = instantiate_node(SyntaxNode,input, index...index)
+        end
+        s0 << r1
+        if r1
+          s3, i3 = [], index
+          loop do
+            if has_terminal?('\G[0-9]', true, index)
+              r4 = true
+              @index += 1
+            else
+              r4 = nil
+            end
+            if r4
+              s3 << r4
+            else
+              break
+            end
+          end
+          r3 = instantiate_node(SyntaxNode,input, i3...index, s3)
+          s0 << r3
+        end
+        if s0.last
+          r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
+          r0.extend(Decint0)
+        else
+          @index = i0
+          r0 = nil
+        end
+
+        node_cache[:decint][start_index] = r0
 
         r0
       end

@@ -60,6 +60,14 @@ describe WebIDL::Parser::IDLParser do
     parse(str).should_not be_nil
   end
 
+  it "parses hex numbers" do
+    str = <<-IDL
+      interface Bar { const unsigned long NULL = 0x0000; };
+    IDL
+
+    parse(str).should_not be_nil
+  end
+
   it "parses the WebSocket interface idl" do
     parse(fixture("websocket.idl")).should_not be_nil
   end
