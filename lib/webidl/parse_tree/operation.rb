@@ -21,7 +21,8 @@ module WebIDL
           parent, typ,  :name     => name,
                         :specials => special_list,
                         :args     => arguments,
-                        :raises   => raise_list
+                        :raises   => raise_list,
+                        :static   => respond_to?(:static)
         )
       end
 

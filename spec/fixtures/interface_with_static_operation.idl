@@ -1,0 +1,3 @@
+interface URL {
+  static DOMString createObjectURL(in Stream stream);
+};

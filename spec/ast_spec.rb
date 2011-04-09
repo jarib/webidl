@@ -214,6 +214,11 @@ describe WebIDL::Ast do
     last.type.should be_nullable
   end
 
+  it "creates a static operation" do
+    interface = parse(fixture("interface_with_static_operation.idl")).build.first
+    interface.members.first.should be_static
+  end
+
   it "creates an implements statement" do
     mod = parse(fixture("module_with_implements_statement.idl")).build.first
 

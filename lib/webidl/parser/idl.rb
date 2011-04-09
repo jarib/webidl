@@ -1542,16 +1542,20 @@ module WebIDL
       end
 
       module Operation0
-        def specials
+        def static
           elements[0]
         end
 
-        def ws
+        def specials
           elements[1]
         end
 
-        def op
+        def ws
           elements[2]
+        end
+
+        def op
+          elements[3]
         end
       end
 
@@ -1567,26 +1571,41 @@ module WebIDL
         end
 
         i0, s0 = index, []
-        i1 = index
-        r2 = _nt_OmittableSpecials
+        if has_terminal?("static", false, index)
+          r2 = instantiate_node(SyntaxNode,input, index...(index + 6))
+          @index += 6
+        else
+          terminal_parse_failure("static")
+          r2 = nil
+        end
         if r2
           r1 = r2
         else
-          r3 = _nt_Specials
-          if r3
-            r1 = r3
-          else
-            @index = i1
-            r1 = nil
-          end
+          r1 = instantiate_node(SyntaxNode,input, index...index)
         end
         s0 << r1
         if r1
-          r4 = _nt_ws
-          s0 << r4
+          i3 = index
+          r4 = _nt_OmittableSpecials
           if r4
-            r5 = _nt_OperationRest
-            s0 << r5
+            r3 = r4
+          else
+            r5 = _nt_Specials
+            if r5
+              r3 = r5
+            else
+              @index = i3
+              r3 = nil
+            end
+          end
+          s0 << r3
+          if r3
+            r6 = _nt_ws
+            s0 << r6
+            if r6
+              r7 = _nt_OperationRest
+              s0 << r7
+            end
           end
         end
         if s0.last

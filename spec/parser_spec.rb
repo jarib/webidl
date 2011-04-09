@@ -71,6 +71,14 @@ describe WebIDL::Parser::IDLParser do
     parse(str).should_not be_nil
   end
 
+  it "parses static types" do
+    str = <<-IDL
+      interface Bar { static DOMString createBar(); };
+    IDL
+
+    parse(str).should_not be_nil
+  end
+
   it "parses the WebSocket interface idl" do
     parse(fixture("websocket.idl")).should_not be_nil
   end

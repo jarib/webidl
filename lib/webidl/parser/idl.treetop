@@ -91,7 +91,7 @@ module WebIDL
       end
 
       rule Operation
-        specials:(OmittableSpecials / Specials) ws op:OperationRest <ParseTree::Operation>
+        static:"static"? specials:(OmittableSpecials / Specials) ws op:OperationRest <ParseTree::Operation>
       end
 
       rule OmittableSpecials

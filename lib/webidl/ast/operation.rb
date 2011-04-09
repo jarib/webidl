@@ -9,6 +9,7 @@ module WebIDL
         @parent   = parent
         @type     = type
         @name     = opts[:name]     || ''
+        @static   = opts[:static]
         @specials = opts[:specials] || []
         @args     = opts[:args]     || []
         @raises   = opts[:raises]   || []
@@ -36,6 +37,10 @@ module WebIDL
 
       def caller?
         @specials.include? 'caller'
+      end
+
+      def static?
+        !!@static
       end
 
     end # Operation
