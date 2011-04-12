@@ -138,6 +138,12 @@ describe WebIDL::Ast do
     interface.inherits.first.qualified_name.should == "::foo"
   end
 
+  it "creates an exception with inheritance" do
+    exception = parse(fixture("exception_with_inheritance.idl")).build.last
+    exception.inherits.should_not be_empty
+    exception.inherits.first.name.should == "NotFoundException"
+  end
+
   it "creates an interface with an array type member" do
     interface = parse(fixture("interface_with_array_member.idl")).build.first
     interface.should be_kind_of(WebIDL::Ast::Interface)

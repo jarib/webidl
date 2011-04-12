@@ -1,0 +1,3 @@
+exception NotFoundException { };
+exception NoSuchElementException : NotFoundException { };
+exception NoSuchFrameException : NotFoundException { };

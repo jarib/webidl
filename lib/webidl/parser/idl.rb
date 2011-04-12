@@ -349,7 +349,7 @@ module WebIDL
               r4 = _nt_ws
               s0 << r4
               if r4
-                r5 = _nt_InterfaceInheritance
+                r5 = _nt_Inheritance
                 s0 << r5
                 if r5
                   r6 = _nt_ws
@@ -418,7 +418,7 @@ module WebIDL
         r0
       end
 
-      module InterfaceInheritance0
+      module Inheritance0
         def ws
           elements[1]
         end
@@ -428,10 +428,10 @@ module WebIDL
         end
       end
 
-      def _nt_InterfaceInheritance
+      def _nt_Inheritance
         start_index = index
-        if node_cache[:InterfaceInheritance].has_key?(index)
-          cached = node_cache[:InterfaceInheritance][index]
+        if node_cache[:Inheritance].has_key?(index)
+          cached = node_cache[:Inheritance][index]
           if cached
             cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
             @index = cached.interval.end
@@ -457,8 +457,8 @@ module WebIDL
           end
         end
         if s1.last
-          r1 = instantiate_node(ParseTree::InterfaceInheritance,input, i1...index, s1)
-          r1.extend(InterfaceInheritance0)
+          r1 = instantiate_node(ParseTree::Inheritance,input, i1...index, s1)
+          r1.extend(Inheritance0)
         else
           @index = i1
           r1 = nil
@@ -469,7 +469,7 @@ module WebIDL
           r0 = instantiate_node(SyntaxNode,input, index...index)
         end
 
-        node_cache[:InterfaceInheritance][start_index] = r0
+        node_cache[:Inheritance][start_index] = r0
 
         r0
       end
@@ -595,20 +595,28 @@ module WebIDL
           elements[3]
         end
 
-        def ws3
-          elements[5]
+        def inherits
+          elements[4]
         end
 
-        def members
-          elements[6]
+        def ws3
+          elements[5]
         end
 
         def ws4
           elements[7]
         end
 
+        def members
+          elements[8]
+        end
+
         def ws5
           elements[9]
+        end
+
+        def ws6
+          elements[11]
         end
 
       end
@@ -643,44 +651,52 @@ module WebIDL
               r4 = _nt_ws
               s0 << r4
               if r4
-                if has_terminal?("{", false, index)
-                  r5 = instantiate_node(SyntaxNode,input, index...(index + 1))
-                  @index += 1
-                else
-                  terminal_parse_failure("{")
-                  r5 = nil
-                end
+                r5 = _nt_Inheritance
                 s0 << r5
                 if r5
                   r6 = _nt_ws
                   s0 << r6
                   if r6
-                    r7 = _nt_ExceptionMembers
+                    if has_terminal?("{", false, index)
+                      r7 = instantiate_node(SyntaxNode,input, index...(index + 1))
+                      @index += 1
+                    else
+                      terminal_parse_failure("{")
+                      r7 = nil
+                    end
                     s0 << r7
                     if r7
                       r8 = _nt_ws
                       s0 << r8
                       if r8
-                        if has_terminal?("}", false, index)
-                          r9 = instantiate_node(SyntaxNode,input, index...(index + 1))
-                          @index += 1
-                        else
-                          terminal_parse_failure("}")
-                          r9 = nil
-                        end
+                        r9 = _nt_ExceptionMembers
                         s0 << r9
                         if r9
                           r10 = _nt_ws
                           s0 << r10
                           if r10
-                            if has_terminal?(";", false, index)
+                            if has_terminal?("}", false, index)
                               r11 = instantiate_node(SyntaxNode,input, index...(index + 1))
                               @index += 1
                             else
-                              terminal_parse_failure(";")
+                              terminal_parse_failure("}")
                               r11 = nil
                             end
                             s0 << r11
+                            if r11
+                              r12 = _nt_ws
+                              s0 << r12
+                              if r12
+                                if has_terminal?(";", false, index)
+                                  r13 = instantiate_node(SyntaxNode,input, index...(index + 1))
+                                  @index += 1
+                                else
+                                  terminal_parse_failure(";")
+                                  r13 = nil
+                                end
+                                s0 << r13
+                              end
+                            end
                           end
                         end
                       end

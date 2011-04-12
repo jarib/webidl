@@ -5,6 +5,10 @@ module WebIDL
       def build(parent)
         ex = Ast::Exception.new(parent, name.text_value)
 
+        unless inherits.empty?
+          ex.inherits = inherits.build(parent)
+        end
+
         members.build(ex) unless members.empty?
 
         ex

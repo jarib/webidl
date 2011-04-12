@@ -21,11 +21,11 @@ module WebIDL
       end
 
       rule Interface
-        "interface" ws name:identifier ws inherits:InterfaceInheritance ws "{" ws members:InterfaceMembers ws "}" ws ";" <ParseTree::Interface>
+        "interface" ws name:identifier ws inherits:Inheritance ws "{" ws members:InterfaceMembers ws "}" ws ";" <ParseTree::Interface>
       end
 
-      rule InterfaceInheritance
-        (":" ws names:ScopedNameList <ParseTree::InterfaceInheritance>)?
+      rule Inheritance
+        (":" ws names:ScopedNameList <ParseTree::Inheritance>)?
       end
 
       # extract to a generic Members syntax node?
@@ -38,7 +38,7 @@ module WebIDL
       end
 
       rule Exception
-        "exception" ws name:identifier ws "{" ws members:ExceptionMembers ws "}" ws ";" <ParseTree::Exception>
+        "exception" ws name:identifier ws inherits:Inheritance ws "{" ws members:ExceptionMembers ws "}" ws ";" <ParseTree::Exception>
       end
 
       # extract to a generic Members syntax node?
