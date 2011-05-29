@@ -1,26 +1,31 @@
-= webidl
+webidl
+======
 
 This gem provides a pure-ruby parser and code generator for Web IDL, an interface description language for interfaces intended to be implemented in web browsers.
 The code generation will be used to generate part of the implementation of Watir 2.0, backed by WebDriver.
 
-= Problems
+Problems
+--------
 
 The code generation could be improved a lot - a lot of the data in the IDL is just ignored. I don't need anything more at the moment, but it should be easy to complete it if anyone needs to.
 
 The parser rules for ExtendedAttribute is not exactly like the grammar from the Web IDL spec, since I ran into infinite recursion issues and don't have the Treetop-fu to figure them out.
 So far this hasn't led to any problems - the parser does parse the IDLs parts of the current HTML5 spec just fine.
 
-= Development tips
+Development tips
+----------------
 
 While working on the grammar, delete the compiled parser (lib/webidl/parser/idl.rb) and make sure you do not have the webidl gem installed. When finished, compile the parser with `rake parser:compile`.
 
-= See also
+See also
+--------
 
 * http://dev.w3.org/2006/webapi/WebIDL/
 * http://dev.w3.org/2006/webapi/WebIDL/#idl-grammar
 * http://dev.w3.org/html5/spec/Overview.html
 
-== Note on Patches/Pull Requests
+Note on Patches/Pull Requests
+-----------------------------
 
 * Fork the project.
 * Make your feature addition or bug fix.
@@ -30,6 +35,7 @@ While working on the grammar, delete the compiled parser (lib/webidl/parser/idl.
   (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
-== Copyright
+Copyright
+---------
 
 Copyright (c) 2009-2011 Jari Bakken. See LICENSE for details.
