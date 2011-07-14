@@ -2,21 +2,32 @@ module WebIDL
   module Ast
     class Type < Node
 
-      attr_reader :name
-
       def initialize(parent, name, opts = {})
         super(parent)
 
         @name     = camel_case_type(name.strip).to_sym
         @nullable = !!opts[:nullable]
+        @array = !!opts[:array]
       end
 
       def nullable?
         @nullable
       end
 
-      def array!
-        @name = "#{@name}Array".to_sym
+      def array?
+        @array
+      end
+
+      def array=(bool)
+        @array = bool
+      end
+
+      def nullable=(bool)
+        @nullable = bool
+      end
+
+      def name
+        (array? ? "#{@name}Array" : @name).to_sym
       end
 
       private

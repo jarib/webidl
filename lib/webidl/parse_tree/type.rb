@@ -9,7 +9,10 @@ module WebIDL
           result = Ast::Type.new parent, result.name # or qualified_name?
         end
 
-        result.array! if array.any?
+        if suffix.any?
+          suffix.apply(result)
+        end
+
         result
       end
 

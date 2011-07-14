@@ -276,25 +276,45 @@ module WebIDL
       end
 
       rule Type
-        type:(  NullableType
-          / ScopedName
-          / "any"     # not sure why these two are here, since
-          / "object"  # they will be caught by ScopedName anyway..
-        ) array:Array <ParseTree::Type>
+        ("sequence" ws "<" ws type:Type ws ">" null:Null <ParseTree::SequenceType> / AttributeType)
       end
 
-      #
-      # added: cannot be followed by a NonSpace character, since e.g. DOMStringMap would break parsing
-      #
+      rule Null
+        "?"?
+      end
 
-      rule NullableType
-          type:UnsignedIntegerType              null:Nullable           <ParseTree::NullableType>
-        / type:"boolean"                        null:Nullable !NonSpace <ParseTree::NullableType>
-        / type:"octet"                          null:Nullable !NonSpace <ParseTree::NullableType>
-        / type:"float"                          null:Nullable !NonSpace <ParseTree::NullableType>
-        / type:"double"                         null:Nullable !NonSpace <ParseTree::NullableType>
-        / type:"DOMString"                      null:Nullable !NonSpace <ParseTree::NullableType>
-        / type:"sequence" ws "<" ws Type ws ">" null:Nullable !NonSpace <ParseTree::NullableType>
+      rule AttributeType
+        type:PrimitiveOrStringType suffix:TypeSuffix <ParseTree::Type>
+          / type:ScopedName suffix:TypeSuffix <ParseTree::Type>
+          / type:"object" suffix:TypeSuffix <ParseTree::Type>
+          / type:"Date" suffix:TypeSuffix <ParseTree::Type>
+          / type:"any" suffix:TypeSuffixStartingWithArray <ParseTree::Type>
+      end
+
+      # added: cannot be followed by a NonSpace character, since e.g. DOMStringMap, DOMStringList or other ScopedNames would break parsing
+      rule PrimitiveOrStringType
+        (UnsignedIntegerType
+          / "boolean"        !NonSpace
+          / "byte"           !NonSpace
+          / "octet"          !NonSpace
+          / "float"          !NonSpace
+          / "double"         !NonSpace
+          / "DOMString"      !NonSpace) {
+            def build(parent)
+              Ast::Type.new(parent, text_value)
+            end
+          }
+      end
+
+      rule TypeSuffix
+        (
+            array:("[" ws "]") suffix:TypeSuffix <ParseTree::TypeSuffix>
+          / null:"?" suffix:TypeSuffixStartingWithArray <ParseTree::TypeSuffix>
+        )?
+      end
+
+      rule TypeSuffixStartingWithArray
+        (array:("[" ws "]") ws suffix:TypeSuffix <ParseTree::TypeSuffix>)?
       end
 
       rule UnsignedIntegerType
