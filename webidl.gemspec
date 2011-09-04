@@ -15,8 +15,9 @@ Gem::Specification.new do |s|
   s.rubyforge_project = "webidl"
 
   s.add_runtime_dependency "treetop"
-  s.add_runtime_dependency "ruby2ruby"
+  s.add_runtime_dependency "ruby2ruby", "~> 1.2.0"
   s.add_development_dependency "rspec", "~> 2.5"
+  s.add_development_dependency "rake", "~> 0.9.2"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
