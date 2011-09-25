@@ -2,7 +2,8 @@ webidl
 ======
 
 This gem provides a pure-ruby parser and code generator for Web IDL, an interface description language for interfaces intended to be implemented in web browsers.
-The code generation will be used to generate part of the implementation of Watir 2.0, backed by WebDriver.
+
+[![Build Status](https://secure.travis-ci.org/jarib/webidl.png)](http://travis-ci.org/jarib/webidl)
 
 Problems
 --------
