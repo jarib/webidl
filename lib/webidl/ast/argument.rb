@@ -10,6 +10,7 @@ module WebIDL
 
         @optional = !!opts[:optional]
         @variadic = !!opts[:variadic]
+        @extended_attributes = opts[:extended_attributes] || []
       end
 
       def optional?

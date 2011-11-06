@@ -1,6 +1,6 @@
 module WebIDL
   module Ast
-    class Interface < Node
+    class Dictionary < Node
 
       def self.list
         @list ||= {}
@@ -9,9 +9,7 @@ module WebIDL
       attr_reader :name
       attr_accessor :extended_attributes,
                     :members,
-                    :inherits,
-                    :implements,
-                    :partial
+                    :inherits
 
       def initialize(parent, name)
         super(parent)
@@ -28,6 +26,6 @@ module WebIDL
         @partial
       end
 
-    end # Interface
+    end # Dictionary
   end # Ast
 end # WebIDL

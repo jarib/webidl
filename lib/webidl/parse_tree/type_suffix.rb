@@ -11,7 +11,9 @@ module WebIDL
           type.nullable = true
         end
 
-        raise NotImplementedError, "TypeSuffix + TypeSuffix" if suffix.any?
+        if suffix.any?
+          suffix.apply(type)
+        end
       end
 
     end # TypeSuffix

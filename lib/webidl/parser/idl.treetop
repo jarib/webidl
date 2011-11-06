@@ -11,6 +11,8 @@ module WebIDL
       rule Definition
           Module
         / Interface
+        / PartialInterface
+        / Dictionary
         / Exception
         / TypeDef
         / ImplementsStatement
@@ -24,6 +26,10 @@ module WebIDL
         "interface" ws name:identifier ws inherits:Inheritance ws "{" ws members:InterfaceMembers ws "}" ws ";" <ParseTree::Interface>
       end
 
+      rule PartialInterface
+        "partial" ws "interface" ws name:identifier ws inherits:Inheritance ws "{" ws members:InterfaceMembers ws "}" ws ";" <ParseTree::PartialInterface>
+      end
+
       rule Inheritance
         (":" ws names:ScopedNameList <ParseTree::Inheritance>)?
       end
@@ -35,6 +41,28 @@ module WebIDL
 
       rule InterfaceMember
         Const / AttributeOrOperation
+      end
+
+      #   Dictionary  → "dictionary" identifier Inheritance "{" DictionaryMembers "}" ";"
+      rule Dictionary
+        "dictionary" ws name:identifier ws inherits:Inheritance ws "{" ws members:DictionaryMembers ws "}" ws ";" <ParseTree::Dictionary>
+      end
+
+      # [11]  DictionaryMembers → ExtendedAttributeList DictionaryMember DictionaryMembers
+      #  | ε
+      rule DictionaryMembers
+        (eal:ExtendedAttributeList ws member:DictionaryMember ws members:DictionaryMembers <ParseTree::DictionaryMembers>)?
+      end
+
+      # [12]  DictionaryMember  → Type identifier DefaultValue ";"
+      rule DictionaryMember
+        type:Type ws name:identifier ws default:DefaultValue ws ";" <ParseTree::DictionaryMember>
+      end
+
+      # [13]  DefaultValue  → "=" ConstValue
+      #  | ε
+      rule DefaultValue
+        ("=" ws const:ConstValue { def build() const.build end })?
       end
 
       rule Exception
@@ -55,10 +83,10 @@ module WebIDL
       end
 
       rule Const
-        "const" ws type:Type ws name:identifier ws "=" ws const_expr:ConstExpr ws ";" <ParseTree::Const>
+        "const" ws type:Type ws name:identifier ws "=" ws const_expr:ConstValue ws ";" <ParseTree::Const>
       end
 
-      rule ConstExpr
+      rule ConstValue
         BooleanLiteral / integer / float
       end
 
@@ -107,7 +135,7 @@ module WebIDL
         / "setter"
         / "creator"
         / "deleter"
-        / "caller"
+        / "legacycaller"
       end
 
       rule OperationRest

@@ -35,8 +35,8 @@ module WebIDL
         @specials.include? 'deleter'
       end
 
-      def caller?
-        @specials.include? 'caller'
+      def legacycaller?
+        @specials.include? 'legacycaller'
       end
 
       def static?

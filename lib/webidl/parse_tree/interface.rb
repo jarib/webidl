@@ -17,5 +17,11 @@ module WebIDL
       end
 
     end # Interface
+
+    class PartialInterface < Interface
+      def partial?
+        true
+      end
+    end
   end # ParseTree
 end # WebIDL
