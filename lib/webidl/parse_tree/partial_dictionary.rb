@@ -1,6 +1,6 @@
 module WebIDL
   module ParseTree
-    class PartialInterface < Interface
+    class PartialDictionary < Dictionary
 
       def build(parent)
         intf = super
@@ -9,8 +9,8 @@ module WebIDL
         intf
       end
 
-      def add_inheritance(parent, intf)
-        # partial interfaces does not support inheritance
+      def add_inheritance(intf)
+        # partial dictionaries does not support inheritance
       end
 
       def partial?

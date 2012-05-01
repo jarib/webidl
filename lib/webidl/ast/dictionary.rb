@@ -9,7 +9,8 @@ module WebIDL
       attr_reader :name
       attr_accessor :extended_attributes,
                     :members,
-                    :inherits
+                    :inherits,
+                    :partial
 
       def initialize(parent, name)
         super(parent)

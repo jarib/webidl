@@ -5,15 +5,19 @@ module WebIDL
       def build(parent)
         dict = Ast::Dictionary.new(parent, name.text_value)
 
-        unless members.empty?
+        if members.any?
           members.build(dict)
         end
 
-        unless inherits.empty?
-          dict.inherits = inherits.build(dict)
-        end
+        add_inheritance(dict)
 
         dict
+      end
+
+      def add_inheritance(dict)
+        if inherits.any?
+          dict.inherits = inherits.build(dict)
+        end
       end
 
     end # Dictionary

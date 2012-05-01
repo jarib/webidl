@@ -11,11 +11,12 @@ module WebIDL
       rule Definition
           Module
         / Interface
-        / PartialInterface
         / Dictionary
+        / Partial
         / Exception
         / TypeDef
         / ImplementsStatement
+        / Enum
       end
 
       rule Module
@@ -26,8 +27,17 @@ module WebIDL
         "interface" ws name:identifier ws inherits:Inheritance ws "{" ws members:InterfaceMembers ws "}" ws ";" <ParseTree::Interface>
       end
 
+      rule Partial
+        "partial" ws defn:PartialDefinition { def build(parent) defn.build(parent) end }
+      end
+
+      rule PartialDefinition
+        PartialInterface / PartialDictionary
+      end
+
+      # like an interface, but no inheritance
       rule PartialInterface
-        "partial" ws "interface" ws name:identifier ws inherits:Inheritance ws "{" ws members:InterfaceMembers ws "}" ws ";" <ParseTree::PartialInterface>
+        "interface" ws name:identifier ws "{" ws members:InterfaceMembers ws "}" ws ";" <ParseTree::PartialInterface>
       end
 
       rule Inheritance
@@ -48,21 +58,27 @@ module WebIDL
         "dictionary" ws name:identifier ws inherits:Inheritance ws "{" ws members:DictionaryMembers ws "}" ws ";" <ParseTree::Dictionary>
       end
 
+      # Like a dictionary, but no inheritance
+      rule PartialDictionary
+        "dictionary" ws name:identifier ws "{" ws members:DictionaryMembers ws "}" ws ";" <ParseTree::PartialDictionary>
+      end
+
       # [11]  DictionaryMembers → ExtendedAttributeList DictionaryMember DictionaryMembers
       #  | ε
       rule DictionaryMembers
         (eal:ExtendedAttributeList ws member:DictionaryMember ws members:DictionaryMembers <ParseTree::DictionaryMembers>)?
       end
 
-      # [12]  DictionaryMember  → Type identifier DefaultValue ";"
       rule DictionaryMember
-        type:Type ws name:identifier ws default:DefaultValue ws ";" <ParseTree::DictionaryMember>
+        type:Type ws name:identifier ws default:Default ws ";" <ParseTree::DictionaryMember>
       end
 
-      # [13]  DefaultValue  → "=" ConstValue
-      #  | ε
+      rule Default
+        ("=" ws val:DefaultValue { def build() val.build end })?
+      end
+
       rule DefaultValue
-        ("=" ws const:ConstValue { def build() const.build end })?
+        string / ConstValue
       end
 
       rule Exception
@@ -87,11 +103,50 @@ module WebIDL
       end
 
       rule ConstValue
-        BooleanLiteral / integer / float
+          "null" { def build() nil end }
+        / BooleanLiteral
+        / FloatLiteral
+        / integer
       end
 
       rule BooleanLiteral
         ("true" / "false") { def build() text_value == "true" end }
+      end
+
+      rule FloatLiteral
+        float
+          / "-" "Infinity" { def build() -1.0/0 end }
+          / "Infinity" { def build() 1.0/0 end }
+          / "NaN" { def build() Float::NAN end }
+      end
+
+      rule Enum
+        "enum" ws id:identifier ws "{" ws values:EnumValueList ws "}" ws ";" <ParseTree::Enum>
+      end
+
+      rule EnumValueList
+        name:string ws
+        vals:EnumValues
+        ws ","? # trailing commas actually not allowed, but in use
+        {
+          def build()
+            res = [name.build]
+            res += vals.build if vals.any?
+
+            res
+          end
+        }
+      end
+
+      rule EnumValues
+        ("," ws name:string ws vals:EnumValues {
+          def build()
+            res = [name.build]
+            res += vals.build if vals.any?
+
+            res
+          end
+        })?
       end
 
       rule AttributeOrOperation
@@ -163,15 +218,39 @@ module WebIDL
       end
 
       rule Argument
-        eal:ExtendedAttributeList ws In ws optional:Optional ws type:Type ws variadic:Ellipsis ws id:identifier <ParseTree::Argument>
+        eal:ExtendedAttributeList ws "in"? ws arg:OptionalOrRequiredArgument <ParseTree::Argument>
       end
 
-      rule In
-        "in"?
+      rule OptionalOrRequiredArgument
+          optional:"optional" ws type:Type ws name:ArgumentName ws default:Default
+        / type:Type ws variadic:Ellipsis ws name:ArgumentName
       end
 
-      rule Optional
-        "optional"?
+
+      rule ArgumentName
+        ArgumentNameKeyword { def build() text_value end } / identifier
+      end
+
+      rule ArgumentNameKeyword
+        "attribute"
+         / "callback"
+         / "const"
+         / "creator"
+         / "deleter"
+         / "dictionary"
+         / "enum"
+         / "exception"
+         / "getter"
+         / "implements"
+         / "inherit"
+         / "interface"
+         / "legacycaller"
+         / "partial"
+         / "setter"
+         / "static"
+         / "stringifier"
+         / "typedef"
+         / "unrestricted"
       end
 
       rule Ellipsis
@@ -304,34 +383,59 @@ module WebIDL
       end
 
       rule Type
-        ("sequence" ws "<" ws type:Type ws ">" null:Null <ParseTree::SequenceType> / AttributeType)
+        SingleType
+        / type:UnionType suffix:TypeSuffix <ParseTree::Type>
       end
 
-      rule Null
-        "?"?
-      end
-
-      rule AttributeType
-        type:PrimitiveOrStringType suffix:TypeSuffix <ParseTree::Type>
-          / type:ScopedName suffix:TypeSuffix <ParseTree::Type>
-          / type:"object" suffix:TypeSuffix <ParseTree::Type>
-          / type:"Date" suffix:TypeSuffix <ParseTree::Type>
+      rule SingleType
+        NonAnyType
           / type:"any" suffix:TypeSuffixStartingWithArray <ParseTree::Type>
       end
 
-      # added: cannot be followed by a NonSpace character, since e.g. DOMStringMap, DOMStringList or other ScopedNames would break parsing
-      rule PrimitiveOrStringType
+      rule UnionType
+        "(" ws UnionMemberType ws "or" ws UnionMemberType ws UnionMemberTypes ws ")"
+      end
+
+      rule UnionMemberType
+        NonAnyType
+          / type:UnionType suffix:TypeSuffix <ParseTree::Type>
+          / type:"any" suffix:TypeSuffixStartingWithArray <ParseTree::Type>
+      end
+
+      rule UnionMemberTypes
+        ("or" ws UnionMemberType ws UnionMemberTypes)?
+      end
+
+      rule NonAnyType
+        type:PrimitiveType suffix:TypeSuffix <ParseTree::Type>
+          # added: cannot be followed by a NonSpace character, since e.g. DOMStringMap, DOMStringList or other identifiers would break parsing
+          / type:"DOMString" suffix:TypeSuffix !NonSpace <ParseTree::Type>
+          / "sequence" ws "<" ws type:Type ws ">" null:Null <ParseTree::SequenceType>
+          / type:"object" suffix:TypeSuffix <ParseTree::Type>
+          / type:"Date" suffix:TypeSuffix <ParseTree::Type>
+          / type:identifier suffix:TypeSuffix <ParseTree::Type>
+      end
+
+      rule ConstType
+          PrimitiveType Null
+          / identifier Null
+      end
+
+      # added: cannot be followed by a NonSpace character, since e.g. DOMStringMap, DOMStringList or other identifiers would break parsing
+      rule PrimitiveType
         (UnsignedIntegerType
-          / "boolean"        !NonSpace
-          / "byte"           !NonSpace
-          / "octet"          !NonSpace
-          / "float"          !NonSpace
-          / "double"         !NonSpace
-          / "DOMString"      !NonSpace) {
+          / UnrestrictedFloatType
+          / "boolean" !NonSpace
+          / "byte" !NonSpace
+          / "octet" !NonSpace) {
             def build(parent)
               Ast::Type.new(parent, text_value)
             end
           }
+      end
+
+      rule Null
+        "?"?
       end
 
       rule TypeSuffix
@@ -349,16 +453,21 @@ module WebIDL
         "unsigned" ws IntegerType / IntegerType
       end
 
+      rule UnrestrictedFloatType
+        "unrestricted" ws FloatType
+        / FloatType
+      end
+
+      rule FloatType
+        "float" / "double"
+      end
+
       rule IntegerType
         ("short" / "long" ws OptionalLong)
       end
 
       rule OptionalLong
         "long"?
-      end
-
-      rule Nullable
-        "?"?
       end
 
       rule Array
@@ -418,11 +527,20 @@ module WebIDL
       end
 
       rule identifier
-        [A-Z_a-z] [0-9A-Z_a-z]* { def build() text_value[/^_?(.+)/, 1] end }
+        [A-Z_a-z] [0-9A-Z_a-z]* { def build(parent = nil) text_value[/^_?(.+)/, 1] end }
       end
 
       rule string
-        "\"" [^"]* "\""
+        # spec only allows double quotes, but single quotes are used in the HTML spec
+        double_quoted_string / single_quoted_string
+      end
+
+      rule double_quoted_string
+        "\"" data:[^"]* "\"" { def build() data.text_value end }
+      end
+
+      rule single_quoted_string
+        "'" data:[^']* "'" { def build() data.text_value end }
       end
 
       rule ws

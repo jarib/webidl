@@ -9,19 +9,17 @@ module WebIDL
           members.build(intf)
         end
 
-        unless inherits.empty?
-          intf.inherits = inherits.build(parent)
-        end
+        add_inheritance(parent, intf)
 
         intf
       end
 
-    end # Interface
-
-    class PartialInterface < Interface
-      def partial?
-        true
+      def add_inheritance(parent, intf)
+        if inherits.any?
+          intf.inherits = inherits.build(parent)
+        end
       end
-    end
+
+    end # Interface
   end # ParseTree
 end # WebIDL

@@ -10,8 +10,8 @@ Problems
 
 The code generation could be improved a lot - a lot of the data in the IDL is just ignored. I don't need anything more at the moment, but it should be easy to complete it if anyone needs to.
 
-The parser rules for ExtendedAttribute is not exactly like the grammar from the Web IDL spec, since I ran into infinite recursion issues and don't have the Treetop-fu to figure them out.
-So far this hasn't led to any problems - the parser does parse the IDLs parts of the current HTML5 spec just fine.
+The parser rules for ExtendedAttribute are not exactly like the grammar from the Web IDL spec, since I ran into infinite recursion issues and don't have the Treetop-fu to figure them out.
+So far this hasn't led to any problems; the parser does parse the IDLs parts of the current HTML5 spec just fine.
 
 Development tips
 ----------------

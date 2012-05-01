@@ -1,6 +1,10 @@
+interface Example {
+  // this is an IDL definition
+};
 
 interface HTMLAllCollection : HTMLCollection {
-  // inherits length and item()
+  // inherits length and item(unsigned long index)
+  object? item(DOMString name);
   legacycaller getter object? namedItem(DOMString name); // overrides inherited namedItem()
   HTMLAllCollection tags(DOMString tagName);
 };
@@ -19,10 +23,7 @@ interface HTMLOptionsCollection : HTMLCollection {
            attribute unsigned long length; // overrides inherited length
   legacycaller getter object? namedItem(DOMString name); // overrides inherited namedItem()
   setter creator void (unsigned long index, HTMLOptionElement option);
-  void add(HTMLOptionElement element, optional HTMLElement? before);
-  void add(HTMLOptGroupElement element, optional HTMLElement? before);
-  void add(HTMLOptionElement element, long before);
-  void add(HTMLOptGroupElement element, long before);
+  void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
   void remove(long index);
            attribute long selectedIndex;
 };
@@ -108,10 +109,12 @@ partial interface Document {
   // event handler IDL attributes
   [TreatNonCallableAsNull] attribute Function? onabort;
   [TreatNonCallableAsNull] attribute Function? onblur;
+  [TreatNonCallableAsNull] attribute Function? oncancel;
   [TreatNonCallableAsNull] attribute Function? oncanplay;
   [TreatNonCallableAsNull] attribute Function? oncanplaythrough;
   [TreatNonCallableAsNull] attribute Function? onchange;
   [TreatNonCallableAsNull] attribute Function? onclick;
+  [TreatNonCallableAsNull] attribute Function? onclose;
   [TreatNonCallableAsNull] attribute Function? oncontextmenu;
   [TreatNonCallableAsNull] attribute Function? oncuechange;
   [TreatNonCallableAsNull] attribute Function? ondblclick;
@@ -172,6 +175,7 @@ interface HTMLElement : Element {
   // metadata attributes
            attribute DOMString title;
            attribute DOMString lang;
+           attribute boolean translate;
            attribute DOMString dir;
            attribute DOMString className;
   readonly attribute DOMTokenList classList;
@@ -215,10 +219,12 @@ interface HTMLElement : Element {
   // event handler IDL attributes
   [TreatNonCallableAsNull] attribute Function? onabort;
   [TreatNonCallableAsNull] attribute Function? onblur;
+  [TreatNonCallableAsNull] attribute Function? oncancel;
   [TreatNonCallableAsNull] attribute Function? oncanplay;
   [TreatNonCallableAsNull] attribute Function? oncanplaythrough;
   [TreatNonCallableAsNull] attribute Function? onchange;
   [TreatNonCallableAsNull] attribute Function? onclick;
+  [TreatNonCallableAsNull] attribute Function? onclose;
   [TreatNonCallableAsNull] attribute Function? oncontextmenu;
   [TreatNonCallableAsNull] attribute Function? oncuechange;
   [TreatNonCallableAsNull] attribute Function? ondblclick;
@@ -396,6 +402,10 @@ interface HTMLDataElement : HTMLElement {
            attribute DOMString value;
 };
 
+interface HTMLTimeElement : HTMLElement {
+           attribute DOMString datetime;
+};
+
 interface HTMLSpanElement : HTMLElement {};
 
 interface HTMLBRElement : HTMLElement {};
@@ -438,6 +448,7 @@ interface HTMLEmbedElement : HTMLElement {
            attribute DOMString type;
            attribute DOMString width;
            attribute DOMString height;
+  legacycaller any (any... arguments);
 };
 
 interface HTMLObjectElement : HTMLElement {
@@ -457,6 +468,8 @@ interface HTMLObjectElement : HTMLElement {
   readonly attribute DOMString validationMessage;
   boolean checkValidity();
   void setCustomValidity(DOMString error);
+
+  legacycaller any (any... arguments);
 };
 
 interface HTMLParamElement : HTMLElement {
@@ -528,9 +541,8 @@ interface HTMLMediaElement : HTMLElement {
 
   // playback state
            attribute double currentTime;
-  readonly attribute double initialTime;
   readonly attribute double duration;
-  readonly attribute Date startOffsetTime;
+  readonly attribute Date startDate;
   readonly attribute boolean paused;
            attribute double defaultPlaybackRate;
            attribute double playbackRate;
@@ -567,7 +579,7 @@ interface MediaError {
   readonly attribute unsigned short code;
 };
 
-interface AudioTrackList {
+interface AudioTrackList : EventTarget {
   readonly attribute unsigned long length;
   getter AudioTrack (unsigned long index);
   AudioTrack? getTrackById(DOMString id);
@@ -584,7 +596,7 @@ interface AudioTrack {
            attribute boolean enabled;
 };
 
-interface VideoTrackList {
+interface VideoTrackList : EventTarget {
   readonly attribute unsigned long length;
   getter VideoTrack (unsigned long index);
   VideoTrack? getTrackById(DOMString id);
@@ -637,22 +649,20 @@ interface MediaController {
   [TreatNonCallableAsNull] attribute Function? onvolumechange;
 };
 
-interface TextTrackList {
+interface TextTrackList : EventTarget {
   readonly attribute unsigned long length;
   getter TextTrack (unsigned long index);
 
   [TreatNonCallableAsNull] attribute Function? onaddtrack;
 };
 
+enum TextTrackMode { "disabled", "hidden", "showing" };
 interface TextTrack : EventTarget {
   readonly attribute DOMString kind;
   readonly attribute DOMString label;
   readonly attribute DOMString language;
 
-  const unsigned short DISABLED = 0;
-  const unsigned short HIDDEN = 1;
-  const unsigned short SHOWING = 2;
-           attribute unsigned short mode;
+           attribute TextTrackMode mode;
 
   readonly attribute TextTrackCueList? cues;
   readonly attribute TextTrackCueList? activeCues;
@@ -678,13 +688,13 @@ interface TextTrackCue : EventTarget {
            attribute double startTime;
            attribute double endTime;
            attribute boolean pauseOnExit;
-           attribute DOMString direction;
+           attribute DOMString vertical;
            attribute boolean snapToLines;
-           attribute long linePosition;
-           attribute long textPosition;
+           attribute long line;
+           attribute long position;
            attribute long size;
-           attribute DOMString alignment;
-           attribute DOMString cueAsSource;
+           attribute DOMString align;
+           attribute DOMString text;
   DocumentFragment getCueAsHTML();
 
   [TreatNonCallableAsNull] attribute Function? onenter;
@@ -703,7 +713,7 @@ interface TrackEvent : Event {
 };
 
 dictionary TrackEventInit : EventInit {
-  object? Track;
+  object? track;
 };
 
 interface HTMLCanvasElement : HTMLElement {
@@ -711,7 +721,7 @@ interface HTMLCanvasElement : HTMLElement {
            attribute unsigned long height;
 
   DOMString toDataURL(optional DOMString type, any... args);
-  void toBlob(FileCallback? callback, optional DOMString type, any... args);
+  void toBlob(FileCallback? _callback, optional DOMString type, any... args);
 
   object? getContext(DOMString contextId, any... args);
 };
@@ -726,30 +736,24 @@ interface CanvasRenderingContext2D {
   void restore(); // pop state stack and restore state
 
   // transformations (default transform is the identity matrix)
+           attribute SVGMatrix currentTransform;
   void scale(double x, double y);
   void rotate(double angle);
   void translate(double x, double y);
   void transform(double a, double b, double c, double d, double e, double f);
   void setTransform(double a, double b, double c, double d, double e, double f);
+  void resetTransform();
 
   // compositing
            attribute double globalAlpha; // (default 1.0)
            attribute DOMString globalCompositeOperation; // (default source-over)
 
-  // colors and styles
+  // colors and styles (see also the CanvasDrawingStyles interface)
            attribute any strokeStyle; // (default black)
            attribute any fillStyle; // (default black)
   CanvasGradient createLinearGradient(double x0, double y0, double x1, double y1);
   CanvasGradient createRadialGradient(double x0, double y0, double r0, double x1, double y1, double r1);
-  CanvasPattern createPattern(HTMLImageElement image, DOMString repetition);
-  CanvasPattern createPattern(HTMLCanvasElement image, DOMString repetition);
-  CanvasPattern createPattern(HTMLVideoElement image, DOMString repetition);
-
-  // line caps/joins
-           attribute double lineWidth; // (default 1)
-           attribute DOMString lineCap; // "butt", "round", "square" (default "butt")
-           attribute DOMString lineJoin; // "round", "bevel", "miter" (default "miter")
-           attribute double miterLimit; // (default 10)
+  CanvasPattern createPattern((HTMLImageElement or HTMLCanvasElement or HTMLVideoElement) image, DOMString repetition);
 
   // shadows
            attribute double shadowOffsetX; // (default 0)
@@ -762,42 +766,37 @@ interface CanvasRenderingContext2D {
   void fillRect(double x, double y, double w, double h);
   void strokeRect(double x, double y, double w, double h);
 
-  // path API
+  // path API (see also CanvasPathMethods)
   void beginPath();
-  void closePath();
-  void moveTo(double x, double y);
-  void lineTo(double x, double y);
-  void quadraticCurveTo(double cpx, double cpy, double x, double y);
-  void bezierCurveTo(double cp1x, double cp1y, double cp2x, double cp2y, double x, double y);
-  void arcTo(double x1, double y1, double x2, double y2, double radius);
-  void rect(double x, double y, double w, double h);
-  void arc(double x, double y, double radius, double startAngle, double endAngle, optional boolean anticlockwise);
   void fill();
+  void fill(Path path);
   void stroke();
+  void stroke(Path path);
   void drawSystemFocusRing(Element element);
+  void drawSystemFocusRing(Path path, Element element);
   boolean drawCustomFocusRing(Element element);
+  boolean drawCustomFocusRing(Path path, Element element);
   void scrollPathIntoView();
+  void scrollPathIntoView(Path path);
   void clip();
+  void clip(Path path);
+  void resetClip();
   boolean isPointInPath(double x, double y);
+  boolean isPointInPath(Path path, double x, double y);
 
-  // text
-           attribute DOMString font; // (default 10px sans-serif)
-           attribute DOMString textAlign; // "start", "end", "left", "right", "center" (default: "start")
-           attribute DOMString textBaseline; // "top", "hanging", "middle", "alphabetic", "ideographic", "bottom" (default: "alphabetic")
+  // text (see also the CanvasDrawingStyles interface)
   void fillText(DOMString text, double x, double y, optional double maxWidth);
   void strokeText(DOMString text, double x, double y, optional double maxWidth);
   TextMetrics measureText(DOMString text);
 
   // drawing images
-  void drawImage(HTMLImageElement image, double dx, double dy);
-  void drawImage(HTMLImageElement image, double dx, double dy, double dw, double dh);
-  void drawImage(HTMLImageElement image, double sx, double sy, double sw, double sh, double dx, double dy, double dw, double dh);
-  void drawImage(HTMLCanvasElement image, double dx, double dy);
-  void drawImage(HTMLCanvasElement image, double dx, double dy, double dw, double dh);
-  void drawImage(HTMLCanvasElement image, double sx, double sy, double sw, double sh, double dx, double dy, double dw, double dh);
-  void drawImage(HTMLVideoElement image, double dx, double dy);
-  void drawImage(HTMLVideoElement image, double dx, double dy, double dw, double dh);
-  void drawImage(HTMLVideoElement image, double sx, double sy, double sw, double sh, double dx, double dy, double dw, double dh);
+           attribute boolean imageSmoothingEnabled; // (default true)
+  void drawImage((HTMLImageElement or HTMLCanvasElement or HTMLVideoElement) image, double dx, double dy);
+  void drawImage((HTMLImageElement or HTMLCanvasElement or HTMLVideoElement) image, double dx, double dy, double dw, double dh);
+  void drawImage((HTMLImageElement or HTMLCanvasElement or HTMLVideoElement) image, double sx, double sy, double sw, double sh, double dx, double dy, double dw, double dh);
+
+  // hit regions
+  void addHitRegion(HitRegionOptions options);
 
   // pixel manipulation
   ImageData createImageData(double sw, double sh);
@@ -805,6 +804,42 @@ interface CanvasRenderingContext2D {
   ImageData getImageData(double sx, double sy, double sw, double sh);
   void putImageData(ImageData imagedata, double dx, double dy);
   void putImageData(ImageData imagedata, double dx, double dy, double dirtyX, double dirtyY, double dirtyWidth, double dirtyHeight);
+};
+CanvasRenderingContext2D implements CanvasDrawingStyles;
+CanvasRenderingContext2D implements CanvasPathMethods;
+
+[NoInterfaceObject]
+interface CanvasDrawingStyles {
+  // line caps/joins
+           attribute double lineWidth; // (default 1)
+           attribute DOMString lineCap; // "butt", "round", "square" (default "butt")
+           attribute DOMString lineJoin; // "round", "bevel", "miter" (default "miter")
+           attribute double miterLimit; // (default 10)
+
+  // dashed lines
+  void setLineDash(sequence<double> segments); // default empty
+  sequence<double> getLineDash();
+           attribute double lineDashOffset;
+
+  // text
+           attribute DOMString font; // (default 10px sans-serif)
+           attribute DOMString textAlign; // "start", "end", "left", "right", "center" (default: "start")
+           attribute DOMString textBaseline; // "top", "hanging", "middle", "alphabetic", "ideographic", "bottom" (default: "alphabetic")
+};
+
+[NoInterfaceObject]
+interface CanvasPathMethods {
+  // shared path API methods
+  void closePath();
+  void moveTo(double x, double y);
+  void lineTo(double x, double y);
+  void quadraticCurveTo(double cpx, double cpy, double x, double y);
+  void bezierCurveTo(double cp1x, double cp1y, double cp2x, double cp2y, double x, double y);
+  void arcTo(double x1, double y1, double x2, double y2, double radius);
+  void arcTo(double x1, double y1, double x2, double y2, double radiusX, double radiusY, double rotation);
+  void rect(double x, double y, double w, double h);
+  void arc(double x, double y, double radius, double startAngle, double endAngle, optional boolean anticlockwise = false);
+  void ellipse(double x, double y, double radiusX, double radiusY, double rotation, double startAngle, double endAngle, boolean anticlockwise);
 };
 
 interface CanvasGradient {
@@ -814,16 +849,68 @@ interface CanvasGradient {
 
 interface CanvasPattern {
   // opaque object
+  void setTransform(SVGMatrix transform);
 };
 
 interface TextMetrics {
-  readonly attribute double width;
+  // x-direction
+  readonly attribute double width; // advance width
+  readonly attribute double actualBoundingBoxLeft;
+  readonly attribute double actualBoundingBoxRight;
+
+  // y-direction
+  readonly attribute double fontBoundingBoxAscent;
+  readonly attribute double fontBoundingBoxDescent;
+  readonly attribute double actualBoundingBoxAscent;
+  readonly attribute double actualBoundingBoxDescent;
+  readonly attribute double emHeightAscent;
+  readonly attribute double emHeightDescent;
+  readonly attribute double hangingBaseline;
+  readonly attribute double alphabeticBaseline;
+  readonly attribute double ideographicBaseline;
+};
+
+dictionary HitRegionOptions {
+  Path? path = null;
+  DOMString id = '';
+  DOMString? parentID = null;
+  DOMString cursor = 'inherit';
+  // for control-backed regions:
+  Element? control = null;
+  // for unbacked regions:
+  DOMString? label = null;
+  DOMString? role = null;
 };
 
 interface ImageData {
   readonly attribute unsigned long width;
   readonly attribute unsigned long height;
   readonly attribute Uint8ClampedArray data;
+};
+
+[Constructor(optional Element scope)]
+interface DrawingStyle { };
+DrawingStyle implements CanvasDrawingStyles;
+
+[Constructor,
+ Constructor(Path path),
+ Constructor(DOMString d)]
+interface Path {
+  void addPath(Path path, SVGMatrix? transformation);
+  void addPathByStrokingPath(Path path, CanvasDrawingStyles styles, SVGMatrix? transformation);
+  void addText(DOMString text, CanvasDrawingStyles styles, SVGMatrix? transformation, double x, double y, optional double maxWidth);
+  void addPathByStrokingText(DOMString text, CanvasDrawingStyles styles, SVGMatrix? transformation, double x, double y, optional double maxWidth);
+  void addText(DOMString text, CanvasDrawingStyles styles, SVGMatrix? transformation, Path path, optional double maxWidth);
+  void addPathByStrokingText(DOMString text, CanvasDrawingStyles styles, SVGMatrix? transformation, Path path, optional double maxWidth);
+};
+Path implements CanvasPathMethods;
+
+partial interface MouseEvent {
+  readonly attribute DOMString? region;
+};
+
+partial dictionary MouseEventInit {
+  DOMString? region;
 };
 
 interface HTMLMapElement : HTMLElement {
@@ -991,7 +1078,7 @@ interface HTMLInputElement : HTMLElement {
            attribute DOMString type;
            attribute DOMString defaultValue;
            attribute DOMString value;
-           attribute Date valueAsDate;
+           attribute Date? valueAsDate;
            attribute double valueAsNumber;
            attribute unsigned long width;
 
@@ -1010,6 +1097,10 @@ interface HTMLInputElement : HTMLElement {
            attribute unsigned long selectionStart;
            attribute unsigned long selectionEnd;
            attribute DOMString selectionDirection;
+
+  void setRangeText(DOMString replacement);
+  void setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional SelectionMode selectionMode);
+
   void setSelectionRange(unsigned long start, unsigned long end, optional DOMString direction);
 };
 
@@ -1050,10 +1141,7 @@ interface HTMLSelectElement : HTMLElement {
            attribute unsigned long length;
   getter Element item(unsigned long index);
   object namedItem(DOMString name);
-  void add(HTMLOptionElement element, optional HTMLElement? before);
-  void add(HTMLOptGroupElement element, optional HTMLElement? before);
-  void add(HTMLOptionElement element, long before);
-  void add(HTMLOptGroupElement element, long before);
+  void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
   void remove(long index);
   setter creator void (unsigned long index, HTMLOptionElement option);
 
@@ -1127,6 +1215,10 @@ interface HTMLTextAreaElement : HTMLElement {
            attribute unsigned long selectionStart;
            attribute unsigned long selectionEnd;
            attribute DOMString selectionDirection;
+
+  void setRangeText(DOMString replacement);
+  void setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional SelectionMode selectionMode);
+
   void setSelectionRange(unsigned long start, unsigned long end, optional DOMString direction);
 };
 
@@ -1184,6 +1276,14 @@ interface HTMLMeterElement : HTMLElement {
   readonly attribute NodeList labels;
 };
 
+
+enum SelectionMode {
+  'select',
+  'start',
+  'end',
+  'preserve',
+};
+
 interface ValidityState {
   readonly attribute boolean valueMissing;
   readonly attribute boolean typeMismatch;
@@ -1207,11 +1307,20 @@ interface HTMLCommandElement : HTMLElement {
            attribute boolean disabled;
            attribute boolean checked;
            attribute DOMString radiogroup;
+  readonly attribute HTMLElement? command;
 };
 
 interface HTMLMenuElement : HTMLElement {
            attribute DOMString type;
            attribute DOMString label;
+};
+
+interface HTMLDialogElement : HTMLElement {
+           attribute boolean open;
+           attribute DOMString returnValue;
+  void show(optional (MouseEvent or Element) anchor);
+  void showModal(optional (MouseEvent or Element) anchor);
+  void close(optional DOMString returnValue);
 };
 
 [ReplaceableNamedProperties]
@@ -1242,7 +1351,7 @@ interface Window : EventTarget {
   [Replaceable] readonly attribute WindowProxy frames;
   [Replaceable] readonly attribute unsigned long length;
   [Unforgeable] readonly attribute WindowProxy top;
-           attribute WindowProxy opener;
+           attribute WindowProxy? opener;
   readonly attribute WindowProxy parent;
   readonly attribute Element? frameElement;
   WindowProxy open(optional DOMString url, optional DOMString target, optional DOMString features, optional boolean replace);
@@ -1270,10 +1379,12 @@ interface Window : EventTarget {
   [TreatNonCallableAsNull] attribute Function? onbeforeprint;
   [TreatNonCallableAsNull] attribute Function? onbeforeunload;
   [TreatNonCallableAsNull] attribute Function? onblur;
+  [TreatNonCallableAsNull] attribute Function? oncancel;
   [TreatNonCallableAsNull] attribute Function? oncanplay;
   [TreatNonCallableAsNull] attribute Function? oncanplaythrough;
   [TreatNonCallableAsNull] attribute Function? onchange;
   [TreatNonCallableAsNull] attribute Function? onclick;
+  [TreatNonCallableAsNull] attribute Function? onclose;
   [TreatNonCallableAsNull] attribute Function? oncontextmenu;
   [TreatNonCallableAsNull] attribute Function? oncuechange;
   [TreatNonCallableAsNull] attribute Function? ondblclick;
@@ -1523,11 +1634,11 @@ interface DataTransferItemList {
 interface DataTransferItem {
   readonly attribute DOMString kind;
   readonly attribute DOMString type;
-  void getAsString(FunctionStringCallback? callback);
+  void getAsString(FunctionStringCallback? _callback);
   File? getAsFile();
 };
 
-[Callback=FunctionOnly, NoInterfaceObject]
+[Callback, NoInterfaceObject]
 interface FunctionStringCallback {
   void handleEvent(DOMString data);
 };
@@ -1541,104 +1652,6 @@ dictionary DragEventInit : MouseEventInit {
   DataTransfer? dataTransfer;
 };
 
-[NoInterfaceObject]
-interface NavigatorUserMedia {
-  void getUserMedia(DOMString options, NavigatorUserMediaSuccessCallback? successCallback, optional NavigatorUserMediaErrorCallback? errorCallback);
-};
-Navigator implements NavigatorUserMedia;
-
-[Callback=FunctionOnly, NoInterfaceObject]
-interface NavigatorUserMediaSuccessCallback {
-  void handleEvent(LocalMediaStream stream);
-};
-
-[NoInterfaceObject]
-interface NavigatorUserMediaError {
-  const unsigned short PERMISSION_DENIED = 1;
-  readonly attribute unsigned short code;
-};
-
-[Callback=FunctionOnly, NoInterfaceObject]
-interface NavigatorUserMediaErrorCallback {
-  void handleEvent(NavigatorUserMediaError error);
-};
-
-[Constructor(MediaStream parentStream)]
-interface MediaStream : EventTarget {
-  readonly attribute DOMString label;
-  readonly attribute MediaStreamTrack[] tracks;
-
-  MediaStreamRecorder record();
-
-  const unsigned short LIVE = 1;
-  const unsigned short ENDED = 2;
-  readonly attribute unsigned short readyState;
-  [TreatNonCallableAsNull] attribute Function? onended;
-};
-
-interface LocalMediaStream : MediaStream {
-  void stop();
-};
-
-interface MediaStreamTrack {
-  readonly attribute DOMString kind;
-  readonly attribute DOMString label;
-           attribute boolean enabled;
-};
-
-interface MediaStreamRecorder {
-  void getRecordedData(BlobCallback? callback);
-};
-
-[Callback=FunctionOnly, NoInterfaceObject]
-interface BlobCallback {
-  void handleEvent(Blob blob);
-};
-
-partial interface URL {
-  static DOMString createObjectURL(MediaStream stream);
-};
-
-[Constructor(DOMString serverConfiguration, SignalingCallback signalingCallback)]
-interface PeerConnection : EventTarget {
-  void processSignalingMessage(DOMString message);
-
-  const unsigned short NEW = 0;
-  const unsigned short NEGOTIATING = 1;
-  const unsigned short ACTIVE = 2;
-  const unsigned short CLOSED = 3;
-  readonly attribute unsigned short readyState;
-
-  void send(DOMString text);
-  void addStream(MediaStream stream);
-  void removeStream(MediaStream stream);
-  readonly attribute MediaStream[] localStreams;
-  readonly attribute MediaStream[] remoteStreams;
-
-  void close();
-
-  // connection quality information
-  [TreatNonCallableAsNull] attribute Function? onconnecting;
-  [TreatNonCallableAsNull] attribute Function? onopen;
-  [TreatNonCallableAsNull] attribute Function? onmessage;
-  [TreatNonCallableAsNull] attribute Function? onaddstream;
-  [TreatNonCallableAsNull] attribute Function? onremovestream;
-};
-
-[Callback=FunctionOnly, NoInterfaceObject]
-interface SignalingCallback {
-  void handleEvent(DOMString message, PeerConnection source);
-};
-
-[Constructor(DOMString type, optional MediaStreamEventInit eventInitDict)]
-interface MediaStreamEvent : Event {
-  readonly attribute MediaStream? stream;
-};
-
-dictionary MediaStreamEventInit : EventInit {
-  // DOMString MediaStream? stream;
-};
-
 interface WorkerGlobalScope : EventTarget {
   readonly attribute WorkerGlobalScope self;
   readonly attribute WorkerLocation location;
@@ -1650,13 +1663,11 @@ interface WorkerGlobalScope : EventTarget {
 };
 WorkerGlobalScope implements WorkerUtils;
 
-[Supplemental, NoInterfaceObject]
 interface DedicatedWorkerGlobalScope : WorkerGlobalScope {
   void postMessage(any message, optional sequence<Transferable> transfer);
   [TreatNonCallableAsNull] attribute Function? onmessage;
 };
 
-[Supplemental, NoInterfaceObject]
 interface SharedWorkerGlobalScope : WorkerGlobalScope {
   readonly attribute DOMString name;
   readonly attribute ApplicationCache applicationCache;
@@ -1676,24 +1687,26 @@ dictionary ErrorEventInit : EventInit {
   unsigned long lineno;
 };
 
-[Supplemental, NoInterfaceObject]
-interface AbstractWorker : EventTarget {
+[NoInterfaceObject]
+interface AbstractWorker {
   [TreatNonCallableAsNull] attribute Function? onerror;
 
 };
 
 [Constructor(DOMString scriptURL)]
-interface Worker : AbstractWorker {
+interface Worker : EventTarget {
   void terminate();
 
   void postMessage(any message, optional sequence<Transferable> transfer);
   [TreatNonCallableAsNull] attribute Function? onmessage;
 };
+Worker implements AbstractWorker;
 
 [Constructor(DOMString scriptURL, optional DOMString name)]
-interface SharedWorker : AbstractWorker {
+interface SharedWorker : EventTarget {
   readonly attribute MessagePort port;
 };
+SharedWorker implements AbstractWorker;
 
 [NoInterfaceObject]
 interface WorkerUtils {
@@ -1758,8 +1771,7 @@ dictionary EventSourceInit {
   boolean withCredentials = false;
 };
 
-[Constructor(DOMString url, optional DOMString protocols),
- Constructor(DOMString url, optional DOMString[] protocols)]
+[Constructor(DOMString url, optional (DOMString or DOMString[]) protocols)]
 interface WebSocket : EventTarget {
   readonly attribute DOMString url;
 
@@ -1839,7 +1851,7 @@ Window implements WindowLocalStorage;
 
 [Constructor(DOMString type, optional StorageEventInit eventInitDict)]
 interface StorageEvent : Event {
-  readonly attribute DOMString key;
+  readonly attribute DOMString? key;
   readonly attribute DOMString? oldValue;
   readonly attribute DOMString? newValue;
   readonly attribute DOMString url;
@@ -1847,7 +1859,7 @@ interface StorageEvent : Event {
 };
 
 dictionary StorageEventInit : EventInit {
-  DOMString key;
+  DOMString? key;
   DOMString? oldValue;
   DOMString? newValue;
   DOMString url;

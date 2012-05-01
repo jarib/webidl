@@ -5,7 +5,7 @@ module WebIDL
       def build(parent = nil)
         return [] if metadef.empty?
 
-        unless metadef.d.empty?
+        if metadef.d.any?
           definition = metadef.d.build(parent)
           definition.extended_attributes = metadef.eal.build(parent) unless metadef.eal.empty?
         end

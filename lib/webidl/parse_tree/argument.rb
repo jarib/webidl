@@ -5,15 +5,20 @@ module WebIDL
       def build(parent)
         xattrs = eal.build(parent) unless eal.empty?
 
-        arg = Ast::Argument.new(
-          id.build,
-          type.build(parent),
-          :optional            => optional.any?,
-          :variadic            => variadic.any?,
-          :extended_attributes => xattrs
-        )
+        options = {:extended_attributes => xattrs}
 
-        arg
+        if arg.respond_to?(:optional) && arg.optional.any?
+          options[:optional] = true
+          options[:default] = arg.default.build if arg.default.any?
+        else
+          options[:variadic] = arg.variadic.any?
+        end
+
+        Ast::Argument.new(
+          arg.name.build,
+          arg.type.build(parent),
+          options
+        )
       end
 
     end # Argument
