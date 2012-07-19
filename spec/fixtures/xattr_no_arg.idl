@@ -1,0 +1,2 @@
+[OverrideBuiltins]
+interface foo {};

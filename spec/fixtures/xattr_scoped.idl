@@ -1,4 +1,2 @@
 [Prefix=org::example]
-module gui {
-
-};
+interface foo {};

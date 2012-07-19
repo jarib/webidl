@@ -1,5 +1,0 @@
-[NamedConstructor=Image(in DOMString src)]
-module gui {
-  typedef DOMString string;
-
-};

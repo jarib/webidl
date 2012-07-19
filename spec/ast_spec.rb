@@ -2,49 +2,36 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe WebIDL::Ast do
 
-  #
-  # modules
-  #
+  it "creates a typedef" do
+    definitions = parse(fixture("typedef.idl")).build
 
-  it "creates a module" do
-    result = parse(fixture("empty_module.idl")).build
+    definitions.should be_kind_of(Array)
 
-    result.should be_kind_of(Array)
-    result.size.should == 1
-
-    result.first.should be_kind_of(WebIDL::Ast::Module)
-    result.first.qualified_name.should == "::gui"
-  end
-
-  it "creates a module with a typedef" do
-    mod = parse(fixture("module_with_typedef.idl")).build.first
-
-    mod.definitions.should be_kind_of(Array)
-
-    typedef = mod.definitions.first
+    typedef = definitions.first
     typedef.should be_kind_of(WebIDL::Ast::TypeDef)
 
     typedef.type.should == 'DOMString'
     typedef.name.should == 'string'
-    typedef.qualified_name.should == '::gui::string'
+    typedef.qualified_name.should == '::string'
   end
 
-  it "creates a module with an extended attribute (no args)" do
-    mod = parse(fixture("module_with_xattr_no_arg.idl")).build.first
-    mod.should be_kind_of(WebIDL::Ast::Module)
+  it "creates an extended attribute (no args)" do
+    intf = parse(fixture("xattr_no_arg.idl")).build.first
+    intf.should be_kind_of(WebIDL::Ast::Interface)
 
-    xattrs = mod.extended_attributes
+    xattrs = intf.extended_attributes
     xattrs.size.should == 1
 
     xattrs.first.should be_kind_of(WebIDL::Ast::ExtendedAttribute)
     xattrs.first.name.should == 'OverrideBuiltins'
   end
 
-  it "creates a module with extended attribute (two args)" do
-    mod = parse(fixture("module_with_xattr_two_args.idl")).build.first
-    mod.should be_kind_of(WebIDL::Ast::Module)
 
-    xattrs = mod.extended_attributes
+  it "creates an extended attribute (two args)" do
+    intf = parse(fixture("xattr_two_args.idl")).build.first
+    intf.should be_kind_of(WebIDL::Ast::Interface)
+
+    xattrs = intf.extended_attributes
     xattrs.size.should == 1
 
     xattr = xattrs.first
@@ -57,11 +44,11 @@ describe WebIDL::Ast do
     xattr.args.each { |a| a.should be_kind_of(WebIDL::Ast::Argument)  }
   end
 
-  it "creates a module with extended attribute (named args)" do
-    mod = parse(fixture("module_with_xattr_named_args.idl")).build.first
-    mod.should be_kind_of(WebIDL::Ast::Module)
+  it "creates extended attribute (named args)" do
+    intf = parse(fixture("xattr_named_args.idl")).build.first
+    intf.should be_kind_of(WebIDL::Ast::Interface)
 
-    xattrs = mod.extended_attributes
+    xattrs = intf.extended_attributes
     xattrs.should be_kind_of(Array)
 
     xattr = xattrs.first
@@ -71,11 +58,11 @@ describe WebIDL::Ast do
     xattr.last.should be_kind_of(WebIDL::Ast::ExtendedAttribute)
   end
 
-  it "creates a module with extended attribute (ident)" do
-    mod = parse(fixture("module_with_xattr_ident.idl")).build.first
-    mod.should be_kind_of(WebIDL::Ast::Module)
+  it "creates an extended attribute (ident)" do
+    intf = parse(fixture("xattr_ident.idl")).build.first
+    intf.should be_kind_of(WebIDL::Ast::Interface)
 
-    xattrs = mod.extended_attributes
+    xattrs = intf.extended_attributes
     xattrs.should be_kind_of(Array)
 
     xattr = xattrs.first
@@ -85,11 +72,11 @@ describe WebIDL::Ast do
     xattr.last.should == "name"
   end
 
-  it "creates a module with extended attribute (scoped name)" do
-    mod = parse(fixture("module_with_xattr_scoped.idl")).build.first
-    mod.should be_kind_of(WebIDL::Ast::Module)
+  it "creates an extended attribute (scoped name)" do
+    intf = parse(fixture("xattr_scoped.idl")).build.first
+    intf.should be_kind_of(WebIDL::Ast::Interface)
 
-    xattrs = mod.extended_attributes
+    xattrs = intf.extended_attributes
     xattrs.should be_kind_of(Array)
 
     xattr = xattrs.first
@@ -156,23 +143,18 @@ describe WebIDL::Ast do
   end
 
   it "creates a framework from the example in the WebIDL spec" do
-    mod = parse(fixture("framework.idl")).build.first
-    mod.definitions.size.should == 4
-    mod.definitions.map { |e| e.class}.should == [
+    definitions = parse(fixture("framework.idl")).build
+    definitions.size.should == 4
+    definitions.map { |e| e.class}.should == [
       WebIDL::Ast::TypeDef,
       WebIDL::Ast::Exception,
       WebIDL::Ast::Interface,
-      WebIDL::Ast::Module
+      WebIDL::Ast::Interface,
     ]
 
-    inner_mod = mod.definitions[3]
-    inner_mod.name.should == 'gui'
-    inner_mod.qualified_name.should == '::framework::gui'
-
-    interface = inner_mod.definitions[0]
+    interface = definitions[3]
     interface.name.should == 'TextField'
-    interface.qualified_name.should == '::framework::gui::TextField'
-    interface.members.first.qualified_name.should == '::framework::gui::TextField::const' # or should it?
+    interface.members.first.qualified_name.should == '::TextField::const' # or should it?
   end
 
 
@@ -181,11 +163,10 @@ describe WebIDL::Ast do
   #
 
   it "creates an exception" do
-    interface = parse(fixture("module_with_exception.idl")).build.first
-    ex        = interface.definitions.first
+    ex = parse(fixture("exception.idl")).build.first
 
     ex.name.should == "FrameworkException"
-    ex.qualified_name.should == '::framework::FrameworkException'
+    ex.qualified_name.should == '::FrameworkException'
     ex.members.size.should == 2
 
     xattr = ex.extended_attributes
@@ -195,7 +176,7 @@ describe WebIDL::Ast do
 
     first.should be_kind_of(WebIDL::Ast::Const)
     first.name.should == "ERR_NOT_FOUND"
-    first.qualified_name.should == '::framework::FrameworkException::ERR_NOT_FOUND'
+    first.qualified_name.should == '::FrameworkException::ERR_NOT_FOUND'
     first.type.should be_kind_of(WebIDL::Ast::Type)
     first.type.name.should == :Long
     first.value.should == 1
@@ -226,14 +207,14 @@ describe WebIDL::Ast do
   end
 
   it "creates an implements statement" do
-    mod = parse(fixture("module_with_implements_statement.idl")).build.first
+    definitions = parse(fixture("implements_statement.idl")).build
 
-    mod.definitions.first.should be_kind_of(WebIDL::Ast::Interface)
+    definitions.first.should be_kind_of(WebIDL::Ast::Interface)
 
-    impls = mod.definitions.last
+    impls = definitions.last
     impls.should be_kind_of(WebIDL::Ast::ImplementsStatement)
-    impls.implementor.should == "::foo::bar"
-    impls.implementee.should == "::foo::baz"
+    impls.implementor.should == "::bar"
+    impls.implementee.should == "::baz"
   end
 
   it "builds an AST from the HTML5 spec" do

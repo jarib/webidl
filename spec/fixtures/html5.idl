@@ -1554,6 +1554,14 @@ interface NavigatorOnLine {
   readonly attribute boolean onLine;
 };
 
+[TreatNonCallableAsNull]
+callback EventHandlerNonNull = any (Event event);
+typedef EventHandlerNonNull? EventHandler;
+
+[TreatNonCallableAsNull]
+callback OnErrorEventHandlerNonNull = any ((Event or DOMString) event, DOMString source, unsigned long lineno, unsigned long column);
+typedef OnErrorEventHandlerNonNull? OnErrorEventHandler;
+
 [NoInterfaceObject]
 interface WindowBase64 {
   DOMString btoa(DOMString btoa);
@@ -1571,6 +1579,8 @@ interface WindowTimers {
   void clearInterval(long handle);
 };
 Window implements WindowTimers;
+
+[TreatNonCallableAsNull] callback ArbitraryCallback = any (any... args);
 
 [NoInterfaceObject] interface WindowModal {
   readonly attribute any dialogArguments;

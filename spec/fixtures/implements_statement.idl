@@ -1,0 +1,4 @@
+interface bar {};
+interface baz {};
+
+bar implements baz;

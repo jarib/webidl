@@ -1,48 +1,36 @@
-// Module identifier: "framework"
-// Qualified name:    "::framework"
-module framework {
+// Typedef identifier: "number"
+typedef float number;
 
-  // Typedef identifier: "number"
-  // Qualified name:    "::framework::number"
-  typedef float number;
+// Exception identifier: "FrameworkException"
+exception FrameworkException {
 
-  // Exception identifier: "FrameworkException"
-  // Qualified name:       "::framework::FrameworkException"
-  exception FrameworkException {
+  // Constant identifier: "ERR_NOT_FOUND"
+  const long ERR_NOT_FOUND = 1;
 
-    // Constant identifier: "ERR_NOT_FOUND"
-    // Qualified name:      "::framework::FrameworkException::ERR_NOT_FOUND"
-    const long ERR_NOT_FOUND = 1;
+  // Exception field identifier: "code"
+  long code;
+};
 
-    // Exception field identifier: "code"
-    long code;
-  };
+// Interface identifier: "System"
+interface System {
 
-  // Interface identifier: "System"
-  // Qualified name:       "::framework::System"
-  interface System {
+  // Operation identifier:          "createObject"
+  // Operation argument identifier: "interface"
+  object createObject(DOMString _interface);
 
-    // Operation identifier:          "createObject"
-    // Operation argument identifier: "interface"
-    object createObject(in DOMString _interface);
+  // Operation argument identifier: "interface"
+  object[] createObjectArray(DOMString interface);
 
-    // Operation has no identifier; it declares a getter.
-    getter DOMString (in DOMString keyName);
-  };
+  // Operation has no identifier; it declares a getter.
+  getter DOMString (DOMString keyName);
+};
 
-  // Module identifier: "gui"
-  // Qualified name:    "::framework::gui"
-  module gui {
+// Interface identifier: "TextField"
+interface TextField {
 
-    // Interface identifier: "TextField"
-    // Qualified name:       "::framework::gui::TextField"
-    interface TextField {
+  // Attribute identifier: "const"
+  attribute boolean _const;
 
-      // Attribute identifier: "const"
-      attribute boolean _const;
-
-      // Attribute identifier: "value"
-      attribute DOMString? _value;
-    };
-  };
+  // Attribute identifier: "value"
+  attribute DOMString? _value;
 };

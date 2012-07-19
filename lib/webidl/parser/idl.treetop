@@ -9,18 +9,22 @@ module WebIDL
       end
 
       rule Definition
-          Module
+        CallbackOrInterface
         / Interface
-        / Dictionary
         / Partial
+        / Dictionary
         / Exception
+        / Enum
         / TypeDef
         / ImplementsStatement
-        / Enum
       end
-
-      rule Module
-        "module" ws name:identifier ws "{" ws defs:Definitions ws "}" ws ";" <ParseTree::Module>
+      
+      rule CallbackOrInterface
+        "callback" ws obj:CallbackRestOrInterface { def build(parent) obj.build(parent) end } 
+      end
+      
+      rule CallbackRestOrInterface
+        CallbackRest / Interface
       end
 
       rule Interface
@@ -88,6 +92,10 @@ module WebIDL
       # extract to a generic Members syntax node?
       rule ExceptionMembers
         (eal:ExtendedAttributeList ws member:ExceptionMember ws members:ExceptionMembers ws <ParseTree::InterfaceMembers>)?
+      end
+      
+      rule CallbackRest
+        name:identifier ws "=" ws return_type:ReturnType ws "(" ws args:ArgumentList ")" ws ";" <ParseTree::Callback>
       end
 
       rule TypeDef

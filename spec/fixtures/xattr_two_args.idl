@@ -1,4 +1,2 @@
 [Constructor(in float x, in float y)]
-module gui {
-
-};
+interface foo {};

@@ -1,4 +1,2 @@
 [PutForwards=name]
-module gui {
-
-};
+interface foo {};

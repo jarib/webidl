@@ -11,7 +11,6 @@ module WebIDL
           operation    = self
         end
 
-        debugger unless operation.type.respond_to?(:build)
         typ        = operation.type.build(parent)
         name       = operation.optional_id.text_value unless operation.optional_id.empty?
         arguments  = operation.args.build(parent) unless operation.args.empty?

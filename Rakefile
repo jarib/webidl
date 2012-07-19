@@ -33,7 +33,7 @@ namespace :webidl do
     size = 0
 
     File.open(spec_file, "w") do |file|
-      file << data = open(SPEC_URL).read
+      file << data = open(WEBIDL_URL).read
       size = data.bytesize
     end
 

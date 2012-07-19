@@ -2,13 +2,6 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe WebIDL::Generator do
 
-  it "generates an empty module" do
-    expected = %Q{module Gui\n  # do nothing\nend\n}
-    actual   = generate(fixture('empty_module.idl'))
-
-    actual.should == expected
-  end
-
   it "generates an empty interface" do
     expected = %Q{module System\n  # do nothing\nend}
     actual   = generate(fixture('empty_interface.idl'))
@@ -16,34 +9,16 @@ describe WebIDL::Generator do
     actual.should == expected
   end
 
-  it "generates nested modules/interfaces" do
+  it "generates an exception" do
     expected = <<-RUBY
-module Foo
-  module Bar
-    # do nothing
-  end
-  module Baz
-    # do nothing
-  end
+class FrameworkException < StandardError
+  ERR_NOT_FOUND = 1
+  attr_accessor(:code)
 end
 RUBY
 
-    actual = generate(fixture("nested.idl"))
-    actual.should == expected
-  end
-
-  it "generates a module with an exception" do
-    expected = <<-RUBY
-module Framework
-  class FrameworkException < StandardError
-    ERR_NOT_FOUND = 1
-    attr_accessor(:code)
-  end
-end
-RUBY
-
-    actual = generate(fixture('module_with_exception.idl'))
-    actual.should == expected
+    actual = generate(fixture('exception.idl'))
+    actual.should == expected.strip
   end
 
   it "generates an interface with attributes" do
@@ -73,21 +48,21 @@ RUBY
 
   it "generates an implements statement" do
     expected = <<-RUBY
-module Foo
-  module Bar
-    # do nothing
-  end
-  module Baz
-    # do nothing
-  end
-  module Foo::Bar
-    include(Foo::Baz)
-  end
+module Bar
+  # do nothing
+end
+
+module Baz
+  # do nothing
+end
+
+module Bar
+  include(Baz)
 end
 RUBY
 
-    actual = generate(fixture("module_with_implements_statement.idl"))
-    actual.should == expected
+    actual = generate(fixture("implements_statement.idl"))
+    actual.should == expected.strip
   end
 
   it "generates code for no-name setters, getters, creators, stringifier and deleters" do
@@ -116,7 +91,7 @@ RUBY
   end
 
   it "accepts an array of AST nodes or a single AST node as input" do
-    ast_nodes = parse(fixture("module_with_implements_statement.idl")).build
+    ast_nodes = parse(fixture("implements_statement.idl")).build
 
 
     lambda { generate(ast_nodes.first)  }.should_not raise_error

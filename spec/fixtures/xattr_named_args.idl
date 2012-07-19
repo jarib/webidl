@@ -1,0 +1,2 @@
+[NamedConstructor=Image(in DOMString src)]
+interface foo {};

@@ -6,6 +6,7 @@ module WebIDL
         return [] if metadef.empty?
 
         if metadef.d.any?
+          p metadef.d unless metadef.d.respond_to? :build
           definition = metadef.d.build(parent)
           definition.extended_attributes = metadef.eal.build(parent) unless metadef.eal.empty?
         end
