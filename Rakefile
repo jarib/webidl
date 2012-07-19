@@ -37,7 +37,7 @@ namespace :webidl do
       size = data.bytesize
     end
 
-    puts "#{SPEC_URL} => #{spec_file} (#{size} bytes)"
+    puts "#{WEBIDL_URL} => #{spec_file} (#{size} bytes)"
   end
 
   desc "Download and extract HTML5 IDL parts to spec/fixtures"
