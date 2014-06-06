@@ -59,6 +59,18 @@ describe WebIDL::Parser::IDLParser do
     parse(str).should_not be_nil
   end
 
+  it "parses a complex extended attribute argument list" do
+    str = <<-IDL
+      [Constructor,
+       Constructor(Path2D path),
+       Constructor(Path2D[] paths, CanvasFillRule fillRule = "nonzero"),
+       Constructor(DOMString d), Exposed=Window,Worker]
+       interface Path2D {       }
+   IDL
+
+    parse(str).should_not be_nil
+  end
+
   it "parses the WebSocket interface idl" do
     parse(fixture("websocket.idl")).should_not be_nil
   end
@@ -67,5 +79,4 @@ describe WebIDL::Parser::IDLParser do
     parse(fixture("html5.idl")).build
     parse(fixture("html5.idl")).should_not be_nil
   end
-
 end
