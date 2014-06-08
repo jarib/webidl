@@ -1,0 +1,4 @@
+dictionary HashChangeEventInit : EventInit {
+  DOMString oldURL;
+  DOMString newURL;
+};

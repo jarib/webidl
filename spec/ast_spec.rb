@@ -217,6 +217,21 @@ describe WebIDL::Ast do
     impls.implementee.should == "::baz"
   end
 
+  it 'creates a dictionary' do
+    definitions = parse(fixture("dictionary.idl")).build
+    dict        = definitions.first
+
+    dict.should be_kind_of(WebIDL::Ast::Dictionary)
+    dict.name.should == "HashChangeEventInit"
+
+    dict.inherits.size.should == 1
+    dict.inherits.first.name.should == "EventInit"
+
+    dict.members.size.should == 2
+    dict.members.map(&:name).should == %w[oldURL newURL]
+    dict.members.map { |e| e.type.name }.should == [:DOMString, :DOMString]
+  end
+
   it "builds an AST from the HTML5 spec" do
     parse(fixture("html5.idl")).build
   end

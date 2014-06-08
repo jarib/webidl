@@ -20,6 +20,15 @@ module WebIDL
       ].compact
     end
 
+    def visit_dictionary(dict)
+      [:module, classify(dict.name),
+        ([:scope, [:block] + dict.inherits.map { |inherit| [:call, nil, :include, [:arglist, inherit.accept(self)]] }] unless dict.inherits.empty?),
+        [:scope,
+          [:block] + dict.members.map { |m| m.accept(self) }
+        ]
+      ].compact
+    end
+
     def visit_exception(ex)
       [:class, classify(ex.name), [:const, :StandardError],
         [:scope,
@@ -32,13 +41,38 @@ module WebIDL
       [:cdecl, const.name, [:lit, const.value]] # FIXME: won't always be literals - need Literal AST node?
     end
 
+    def visit_enum(enum)
+      [:cdecl, enum.name, [:lit, enum.values]]
+    end
+
     def visit_field(field)
       [:call, nil, :attr_accessor, [:arglist, [:lit, field.name.to_sym]]]
     end
 
     def visit_attribute(attribute)
       func = attribute.readonly? ? :attr_reader : :attr_accessor
-      [:call, nil, func, [:arglist, [:lit, attribute.name.snake_case.to_sym]]]
+      [:call, nil, func, [:arglist, [:lit, attrify(attribute.name).to_sym]]]
+    end
+
+    def visit_dictionary_member(mem)
+      [:call, nil, :attr_accessor, [:arglist, [:lit, attrify(mem.name).to_sym]]]
+    end
+
+    def visit_callback(callback)
+      arguments = callback.arguments.map { |a| [:lit, attrify(a.name).to_sym] }
+
+      [:defn, callback.name,
+        [:args] + callback.arguments.map { |a| a.accept(self) },
+        [:scope,
+          [:block,
+            [:call, nil, :raise,
+              [:arglist,
+                [:const, :NotImplementedError]
+              ]
+            ]
+          ]
+        ]
+      ]
     end
 
     def visit_operation(operation)
@@ -53,11 +87,13 @@ module WebIDL
           meth = :to_s
         elsif operation.deleter?
           meth = :delete!
+        elsif operation.legacycaller?
+          meth = operation.parent.name
         else
-          raise "no name for operation #{operation.pretty_inspect}"
+          raise "no name for operation #{operation.inspect}"
         end
       else
-        meth = operation.name.snake_case
+        meth = attrify(operation.name)
         meth << "=" if operation.setter?
       end
 
@@ -76,7 +112,7 @@ module WebIDL
     end
 
     def visit_argument(argument)
-      name = argument.name.snake_case
+      name = attrify(argument.name)
       arg = argument.variadic? ? "*#{name}" : name
 
       arg.to_sym
@@ -112,6 +148,26 @@ module WebIDL
       else
         "#{s.slice(0,1).upcase}#{s[1..-1]}".to_sym
       end
+    end
+
+    RESERVED = %w[
+      BEGIN	do	next	then
+      END	else	nil	true
+      alias	elsif	not	undef
+      and	end	or	unless
+      begin	ensure	redo	until
+      break	false	rescue	when
+      case	for	retry	while
+      class	if	return	while
+      def	in	self	__FILE__
+      defined?	module	super	__LINE__
+    ]
+
+    def attrify(string)
+      attr = string.snake_case
+      attr += '_' if RESERVED.include?(attr)
+
+      attr
     end
 
   end # RubySexpVisitor

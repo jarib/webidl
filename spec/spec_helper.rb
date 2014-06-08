@@ -9,14 +9,17 @@ require 'webidl'
 require 'rspec'
 require "pp"
 
+
 # require "ruby-debug"
 # Debugger.start
 # Debugger.settings[:autoeval] = true
 # Debugger.settings[:autolist] = 1
 
 module ParseHelper
+  CACHE = {}
+
   def parse(input)
-    result = @parser.parse(input)
+    result = CACHE.fetch(input) { CACHE[input] = @parser.parse(input) }
 
     unless result
       raise @parser.failure_reason

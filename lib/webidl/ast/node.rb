@@ -2,6 +2,8 @@ module WebIDL
   module Ast
     class Node
 
+      attr_reader :parent
+
       def initialize(parent = nil)
         @parent = parent
       end
