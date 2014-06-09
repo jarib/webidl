@@ -26,6 +26,7 @@ See also
 * http://dev.w3.org/2006/webapi/WebIDL/
 * http://dev.w3.org/2006/webapi/WebIDL/#idl-grammar
 * http://dev.w3.org/html5/spec/Overview.html
+* https://github.com/heycam/webidl
 
 Note on Patches/Pull Requests
 -----------------------------
