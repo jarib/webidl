@@ -21,7 +21,7 @@ module WebIDL
                         :specials => special_list,
                         :args     => arguments,
                         :raises   => raise_list,
-                        :static   => respond_to?(:static)
+                        :static   => respond_to?(:static) && !static.empty?
         )
       end
 
