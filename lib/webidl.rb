@@ -53,6 +53,7 @@ require "webidl/ast/exception"
 require "webidl/ast/attribute"
 require "webidl/ast/field"
 require "webidl/ast/implements_statement"
+require "webidl/ast/promise_type"
 
 require "webidl/parser/debug_helper"
 require "webidl/parser/idl"

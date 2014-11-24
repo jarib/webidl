@@ -37,5 +37,11 @@ module WebIDL
       end
     end
 
+    class ExtendedAttributeIdentList < Treetop::Runtime::SyntaxNode
+      def build(parent)
+        [key.text_value, list.text_value.split(",").map(&:strip)]
+      end
+    end
+
   end # ParseTree
 end # WebIDL

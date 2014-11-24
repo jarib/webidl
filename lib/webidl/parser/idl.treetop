@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 module WebIDL
   module Parser
 
@@ -18,11 +19,11 @@ module WebIDL
         / TypeDef
         / ImplementsStatement
       end
-      
+
       rule CallbackOrInterface
-        "callback" ws obj:CallbackRestOrInterface { def build(parent) obj.build(parent) end } 
+        "callback" ws obj:CallbackRestOrInterface { def build(parent) obj.build(parent) end }
       end
-      
+
       rule CallbackRestOrInterface
         CallbackRest / Interface
       end
@@ -93,7 +94,7 @@ module WebIDL
       rule ExceptionMembers
         (eal:ExtendedAttributeList ws member:ExceptionMember ws members:ExceptionMembers ws <ParseTree::InterfaceMembers>)?
       end
-      
+
       rule CallbackRest
         name:identifier ws "=" ws return_type:ReturnType ws "(" ws args:ArgumentList ")" ws ";" <ParseTree::Callback>
       end
@@ -291,6 +292,7 @@ module WebIDL
         / ExtendedAttributeIdent
         / ExtendedAttributeScopedName
         / ExtendedAttributeArgList
+        / ExtendedAttributeIdentList
         / ExtendedAttributeNoArg
       end
 
@@ -317,6 +319,20 @@ module WebIDL
       rule ExtendedAttributeNamedArgList
         key:identifier "=" value:(name:identifier "(" ws args:ArgumentList ws ")" <ParseTree::ExtendedAttributeArgList>) <ParseTree::ExtendedAttributeNamedArgList>
       end
+
+      rule ExtendedAttributeIdentList
+        key:identifier "=" "(" list:IdentifierList ")" <ParseTree::ExtendedAttributeIdentList>
+      end
+
+      rule IdentifierList
+        identifier Identifiers
+      end
+
+      rule Identifiers
+        ("," IdentifierList)?
+      end
+
+
 
 
     #  rule ExtendedAttribute
@@ -417,11 +433,20 @@ module WebIDL
       rule NonAnyType
         type:PrimitiveType suffix:TypeSuffix <ParseTree::Type>
           # added: cannot be followed by a NonSpace character, since e.g. DOMStringMap, DOMStringList or other identifiers would break parsing
+          / type:PromiseType Null { def build(parent); type.build(parent); end }
           / type:"DOMString" suffix:TypeSuffix !NonSpace <ParseTree::Type>
           / "sequence" ws "<" ws type:Type ws ">" null:Null <ParseTree::SequenceType>
           / type:"object" suffix:TypeSuffix <ParseTree::Type>
           / type:"Date" suffix:TypeSuffix <ParseTree::Type>
           / type:identifier suffix:TypeSuffix <ParseTree::Type>
+      end
+
+      rule PromiseType
+         "Promise" "<" return_type:ReturnType ">" {
+            def build(parent)
+              Ast::PromiseType.new(return_type.text_value)
+            end
+         }
       end
 
       rule ConstType
