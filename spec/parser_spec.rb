@@ -3,6 +3,53 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe WebIDL::Parser::IDLParser do
 
   #
+  # dictionaries
+  #
+
+  it "parses an empty dictionary" do
+    str = <<-IDL
+      dictionary Foo {};
+    IDL
+    parse(str).should_not be_nil
+  end
+
+  it "parses dictionary members" do
+    str = <<-IDL
+      dictionary Foo { DOMString foo; };
+    IDL
+    parse(str).should_not be_nil
+  end
+
+  it "parses required dictionary members" do
+    str = <<-IDL
+      dictionary Foo { required DOMString foo; };
+    IDL
+    parse(str).should_not be_nil
+  end
+
+  #
+  # promises
+  #
+
+  it "parses empty promises" do
+    str = <<-IDL
+      interface Asdf {
+        Promise <DOMString> doSomething ();
+      };
+    IDL
+    parse(str).should_not be_nil
+  end
+
+  it "parses promises with ws around return type" do
+    str = <<-IDL
+      interface Asdf {
+        Promise < DOMString > doSomething ();
+      };
+    IDL
+    parse(str).should_not be_nil
+  end
+
+  #
   # interfaces
   #
 

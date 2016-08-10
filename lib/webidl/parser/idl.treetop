@@ -74,8 +74,12 @@ module WebIDL
         (eal:ExtendedAttributeList ws member:DictionaryMember ws members:DictionaryMembers <ParseTree::DictionaryMembers>)?
       end
 
+      rule Required
+        "required"
+      end
+
       rule DictionaryMember
-        type:Type ws name:identifier ws default:Default ws ";" <ParseTree::DictionaryMember>
+        required:Required? ws type:Type ws name:identifier ws default:Default ws ";" <ParseTree::DictionaryMember>
       end
 
       rule Default
@@ -442,7 +446,7 @@ module WebIDL
       end
 
       rule PromiseType
-         "Promise" "<" return_type:ReturnType ">" {
+         "Promise" ws "<" ws return_type:ReturnType ws ">" {
             def build(parent)
               Ast::PromiseType.new(return_type.text_value)
             end
