@@ -3,9 +3,9 @@ webidl
 
 This gem provides a pure-ruby parser and code generator for Web IDL, an interface description language for interfaces intended to be implemented in web browsers.
 
-[![Build Status](https://secure.travis-ci.org/jarib/webidl.png)](http://travis-ci.org/jarib/webidl)
-[![Coverage Status](https://coveralls.io/repos/jarib/webidl/badge.png)](https://coveralls.io/r/jarib/webidl)
-[![Code Climate](https://codeclimate.com/github/jarib/webidl.png)](https://codeclimate.com/github/jarib/webidl)
+[![Build Status](https://secure.travis-ci.org/jarib/webidl.svg)](http://travis-ci.org/jarib/webidl)
+[![Coverage Status](https://coveralls.io/repos/jarib/webidl/badge.svg)](https://coveralls.io/r/jarib/webidl)
+[![Code Climate](https://codeclimate.com/github/jarib/webidl.svg)](https://codeclimate.com/github/jarib/webidl)
 
 Problems
 --------
