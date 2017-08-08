@@ -333,7 +333,7 @@ module WebIDL
       end
 
       rule Identifiers
-        ("," IdentifierList)?
+        ("," ws IdentifierList)?
       end
 
 
