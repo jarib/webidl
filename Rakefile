@@ -23,8 +23,8 @@ namespace :parser do
 end
 
 namespace :webidl do
-  WEBIDL_URL = "http://dev.w3.org/2006/webapi/WebIDL/"
-  HTML5_URL = "https://www.whatwg.org/specs/web-apps/current-work/"
+  WEBIDL_URL = "https://heycam.github.io/webidl/"
+  HTML5_URL = "https://www.w3.org/TR/html/single-page.html"
 
   desc "Download the webidl spec to support/"
   task :download do
