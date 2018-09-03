@@ -28,36 +28,30 @@ interface HTMLOptionsCollection : HTMLCollection {
 };
 
 
-[OverrideBuiltins]
-interface DOMStringMap {
-  getter DOMString (DOMString name);
-  setter void (DOMString name, DOMString value);
-  deleter void (DOMString name);
-};
-
-
-interface DOMElementMap {
-  getter Element (DOMString name);
-  setter creator void (DOMString name, Element value);
-  deleter void (DOMString name);
+interface DOMStringList {
+  readonly attribute unsigned long length;
+  getter DOMString? item(unsigned long index);
+  boolean contains(DOMString string);
 };
 
 
 enum DocumentReadyState { "loading", "interactive", "complete" };
 
+typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
+
 [OverrideBuiltins]
-partial /*sealed*/ interface Document {
+partial interface Document {
   // resource metadata management
   [PutForwards=href, Unforgeable] readonly attribute Location? location;
-  attribute DOMString domain;
-  readonly attribute DOMString referrer;
-  attribute DOMString cookie;
+  attribute USVString domain;
+  readonly attribute USVString referrer;
+  attribute USVString cookie;
   readonly attribute DOMString lastModified;
   readonly attribute DocumentReadyState readyState;
 
   // DOM tree accessors
   getter object (DOMString name);
-  attribute DOMString title;
+  [CEReactions] attribute DOMString title;
   attribute DOMString dir;
   attribute HTMLElement? body;
   readonly attribute HTMLHeadElement? head;
@@ -68,21 +62,21 @@ partial /*sealed*/ interface Document {
   [SameObject] readonly attribute HTMLCollection forms;
   [SameObject] readonly attribute HTMLCollection scripts;
   NodeList getElementsByName(DOMString elementName);
-  readonly attribute HTMLScriptElement? currentScript;
+  readonly attribute HTMLOrSVGScriptElement? currentScript; // classic scripts in a document tree only
 
   // dynamic markup insertion
   Document open(optional DOMString type = "text/html", optional DOMString replace = "");
   WindowProxy open(DOMString url, DOMString name, DOMString features, optional boolean replace = false);
-  void close();
-  void write(DOMString... text);
-  void writeln(DOMString... text);
+  [CEReactions] void close();
+  [CEReactions] void write(DOMString... text);
+  [CEReactions] void writeln(DOMString... text);
 
   // user interaction
   readonly attribute WindowProxy? defaultView;
   readonly attribute Element? activeElement;
   boolean hasFocus();
-  attribute DOMString designMode;
-  boolean execCommand(DOMString commandId, optional boolean showUI = false, optional DOMString value = "");
+  [CEReactions] attribute DOMString designMode;
+  [CEReactions] boolean execCommand(DOMString commandId, optional boolean showUI = false, optional DOMString value = "");
   boolean queryCommandEnabled(DOMString commandId);
   boolean queryCommandIndeterm(DOMString commandId);
   boolean queryCommandState(DOMString commandId);
@@ -96,38 +90,41 @@ Document implements GlobalEventHandlers;
 Document implements DocumentAndElementEventHandlers;
 
 
-partial interface XMLDocument {
-  boolean load(DOMString url);
-};
-
-
+[HTMLConstructor]
 interface HTMLElement : Element {
   // metadata attributes
-  attribute DOMString title;
-  attribute DOMString lang;
-  attribute boolean translate;
-  attribute DOMString dir;
+  [CEReactions] attribute DOMString title;
+  [CEReactions] attribute DOMString lang;
+  [CEReactions] attribute boolean translate;
+  [CEReactions] attribute DOMString dir;
   [SameObject] readonly attribute DOMStringMap dataset;
 
   // user interaction
-  attribute boolean hidden;
+  [CEReactions] attribute boolean hidden;
   void click();
-  attribute long tabIndex;
+  [CEReactions] attribute long tabIndex;
   void focus();
   void blur();
-  attribute DOMString accessKey;
-  attribute boolean draggable;
-  [PutForwards=value] readonly attribute DOMTokenList dropzone;
-  attribute HTMLMenuElement? contextMenu;
-  attribute boolean spellcheck;
+  [CEReactions] attribute DOMString accessKey;
+  [CEReactions] attribute boolean draggable;
+  [CEReactions] attribute boolean spellcheck;
   void forceSpellCheck();
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString innerText;
 };
 HTMLElement implements GlobalEventHandlers;
 HTMLElement implements DocumentAndElementEventHandlers;
 HTMLElement implements ElementContentEditable;
 
-
+// Note: intentionally not [HTMLConstructor]
 interface HTMLUnknownElement : HTMLElement { };
+
+
+[OverrideBuiltins]
+interface DOMStringMap {
+  getter DOMString (DOMString name);
+  [CEReactions] setter void (DOMString name, DOMString value);
+  [CEReactions] deleter void (DOMString name);
+};
 
 
 interface HTMLHtmlElement : HTMLElement {};
@@ -148,17 +145,19 @@ interface HTMLBaseElement : HTMLElement {
 
 
 interface HTMLLinkElement : HTMLElement {
-  attribute DOMString href;
-  attribute DOMString? crossOrigin;
-  attribute DOMString rel;
-  attribute DOMString rev;
-  [SameObject, PutForwards=value]readonly attribute DOMTokenList relList;
-  attribute DOMString media;
-  attribute DOMString hreflang;
-  attribute DOMString type;
-  [SameObject, PutForwards=value] readonly attribute DOMTokenList sizes;
+   [CEReactions] attribute USVString href;
+   [CEReactions] attribute DOMString? crossOrigin;
+   [CEReactions] attribute DOMString rel;
+   [CEReactions] attribute DOMString rev;
+   [CEReactions, SameObject, PutForwards=value] readonly attribute DOMTokenList relList;
+   [CEReactions] attribute DOMString media;
+   [CEReactions] attribute DOMString nonce;
+   [CEReactions] attribute DOMString hreflang;
+   [CEReactions] attribute DOMString type;
+   [CEReactions, SameObject, PutForwards=value] readonly attribute DOMTokenList sizes;
+   [CEReactions] attribute DOMString referrerPolicy;
 };
-HTMLLinkElement implements LinkStyle;
+ HTMLLinkElement implements LinkStyle;
 
 
 interface HTMLMetaElement : HTMLElement {
@@ -228,6 +227,7 @@ interface HTMLAnchorElement : HTMLElement {
   attribute DOMString hreflang;
   attribute DOMString type;
   attribute DOMString text;
+  attribute DOMString referrerPolicy;
 };
 HTMLAnchorElement implements HTMLHyperlinkElementUtils;
 
@@ -257,7 +257,9 @@ interface HTMLModElement : HTMLElement {
 interface HTMLPictureElement : HTMLElement {};
 
 
-partial interface HTMLSourceElement {
+interface HTMLSourceElement : HTMLElement {
+  attribute DOMString src;
+  attribute DOMString type;
   attribute DOMString srcset;
   attribute DOMString sizes;
   attribute DOMString media;
@@ -272,6 +274,7 @@ interface HTMLImageElement : HTMLElement {
   attribute DOMString sizes;
   attribute DOMString? crossOrigin;
   attribute DOMString useMap;
+  attribute DOMString longDesc;
   attribute boolean isMap;
   attribute unsigned long width;
   attribute unsigned long height;
@@ -279,6 +282,7 @@ interface HTMLImageElement : HTMLElement {
   readonly attribute unsigned long naturalHeight;
   readonly attribute boolean complete;
   readonly attribute DOMString currentSrc;
+  attribute DOMString referrerPolicy;
 };
 
 
@@ -286,10 +290,12 @@ interface HTMLIFrameElement : HTMLElement {
   attribute DOMString src;
   attribute DOMString srcdoc;
   attribute DOMString name;
-  [PutForwards=value] readonly attribute DOMTokenList sandbox;
+  [SameObject, PutForwards=value] readonly attribute DOMTokenList sandbox;
   attribute boolean allowFullscreen;
+  attribute boolean allowPaymentRequest;
   attribute DOMString width;
   attribute DOMString height;
+  attribute DOMString referrerPolicy;
   readonly attribute Document? contentDocument;
   readonly attribute WindowProxy? contentWindow;
 };
@@ -343,12 +349,6 @@ interface HTMLVideoElement : HTMLMediaElement {
 
 [NamedConstructor=Audio(optional DOMString src)]
 interface HTMLAudioElement : HTMLMediaElement {};
-
-
-interface HTMLSourceElement : HTMLElement {
-  attribute DOMString src;
-  attribute DOMString type;
-};
 
 
 interface HTMLTrackElement : HTMLElement {
@@ -557,7 +557,7 @@ interface TrackEvent : Event {
 };
 
 dictionary TrackEventInit : EventInit {
-  (VideoTrack or AudioTrack or TextTrack)? track;
+  (VideoTrack or AudioTrack or TextTrack)? track = null;
 };
 
 
@@ -575,9 +575,10 @@ interface HTMLAreaElement : HTMLElement {
   attribute DOMString target;
   attribute DOMString download;
   attribute DOMString rel;
-  readonly attribute DOMTokenList relList;
+  [SameObject, PutForwards=value] readonly attribute DOMTokenList relList;
   attribute DOMString hreflang;
   attribute DOMString type;
+  attribute DOMString referrerPolicy;
 };
 HTMLAreaElement implements HTMLHyperlinkElementUtils;
 
@@ -652,7 +653,7 @@ interface HTMLTableHeaderCellElement : HTMLTableCellElement {
 interface HTMLTableCellElement : HTMLElement {
   attribute unsigned long colSpan;
   attribute unsigned long rowSpan;
-  [PutForwards=value] readonly attribute DOMTokenList headers;
+  [SameObject, PutForwards=value] readonly attribute DOMTokenList headers;
   readonly attribute long cellIndex;
 };
 
@@ -706,7 +707,6 @@ interface HTMLInputElement : HTMLElement {
   attribute DOMString formTarget;
   attribute unsigned long height;
   attribute boolean indeterminate;
-  attribute DOMString inputMode;
   readonly attribute HTMLElement? list;
   attribute DOMString max;
   attribute long maxLength;
@@ -717,7 +717,7 @@ interface HTMLInputElement : HTMLElement {
   attribute DOMString pattern;
   attribute DOMString placeholder;
   attribute boolean readOnly;
-  attribute boolean required;
+  attribute boolean _required;
   attribute unsigned long size;
   attribute DOMString src;
   attribute DOMString step;
@@ -741,9 +741,9 @@ interface HTMLInputElement : HTMLElement {
   [SameObject] readonly attribute NodeList labels;
 
   void select();
-  attribute unsigned long selectionStart;
-  attribute unsigned long selectionEnd;
-  attribute DOMString selectionDirection;
+  attribute unsigned long? selectionStart;
+  attribute unsigned long? selectionEnd;
+  attribute DOMString? selectionDirection;
   void setRangeText(DOMString replacement);
   void setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional SelectionMode selectionMode = "preserve");
   void setSelectionRange(unsigned long start, unsigned long end, optional DOMString direction);
@@ -762,7 +762,6 @@ interface HTMLButtonElement : HTMLElement {
   attribute DOMString name;
   attribute DOMString type;
   attribute DOMString value;
-  attribute HTMLMenuElement? menu;
 
   readonly attribute boolean willValidate;
   readonly attribute ValidityState validity;
@@ -782,7 +781,7 @@ interface HTMLSelectElement : HTMLElement {
   readonly attribute HTMLFormElement? form;
   attribute boolean multiple;
   attribute DOMString name;
-  attribute boolean required;
+  attribute boolean _required;
   attribute unsigned long size;
 
   readonly attribute DOMString type;
@@ -843,13 +842,12 @@ interface HTMLTextAreaElement : HTMLElement {
   attribute DOMString dirName;
   attribute boolean disabled;
   readonly attribute HTMLFormElement? form;
-  attribute DOMString inputMode;
   attribute long maxLength;
   attribute long minLength;
   attribute DOMString name;
   attribute DOMString placeholder;
   attribute boolean readOnly;
-  attribute boolean required;
+  attribute boolean _required;
   attribute unsigned long rows;
   attribute DOMString wrap;
 
@@ -868,33 +866,12 @@ interface HTMLTextAreaElement : HTMLElement {
   [SameObject] readonly attribute NodeList labels;
 
   void select();
-  attribute unsigned long selectionStart;
-  attribute unsigned long selectionEnd;
-  attribute DOMString selectionDirection;
+  attribute unsigned long? selectionStart;
+  attribute unsigned long? selectionEnd;
+  attribute DOMString? selectionDirection;
   void setRangeText(DOMString replacement);
   void setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional SelectionMode selectionMode = "preserve");
   void setSelectionRange(unsigned long start, unsigned long end, optional DOMString direction);
-};
-
-
-interface HTMLKeygenElement : HTMLElement {
-  attribute boolean autofocus;
-  attribute DOMString challenge;
-  attribute boolean disabled;
-  readonly attribute HTMLFormElement? form;
-  attribute DOMString keytype;
-  attribute DOMString name;
-
-  readonly attribute DOMString type;
-
-  readonly attribute boolean willValidate;
-  readonly attribute ValidityState validity;
-  readonly attribute DOMString validationMessage;
-  boolean checkValidity();
-  boolean reportValidity();
-  void setCustomValidity(DOMString error);
-
-  [SameObject] readonly attribute NodeList labels;
 };
 
 
@@ -988,30 +965,12 @@ interface HTMLDetailsElement : HTMLElement {
 };
 
 
-interface HTMLMenuElement : HTMLElement {
-  attribute DOMString type;
-  attribute DOMString label;
-};
-
-
-interface HTMLMenuItemElement : HTMLElement {
-  attribute DOMString type;
-  attribute DOMString label;
-  attribute DOMString icon;
-  attribute boolean disabled;
-  attribute boolean checked;
-  attribute DOMString radiogroup;
-  attribute boolean default;
-};
-
-
-[Constructor(DOMString type, optional RelatedEventInit eventInitDict)]
-interface RelatedEvent : Event {
-  readonly attribute EventTarget? relatedTarget;
-};
-
-dictionary RelatedEventInit : EventInit {
-  EventTarget? relatedTarget;
+interface HTMLDialogElement : HTMLElement {
+  attribute boolean open;
+  attribute DOMString returnValue;
+  void show(optional (MouseEvent or Element) anchor);
+  void showModal(optional (MouseEvent or Element) anchor);
+  void close(optional DOMString returnValue);
 };
 
 
@@ -1027,6 +986,8 @@ interface HTMLScriptElement : HTMLElement {
 };
 
 
+[Exposed=Window,
+ HTMLConstructor]
 interface HTMLTemplateElement : HTMLElement {
   readonly attribute DocumentFragment content;
 };
@@ -1134,6 +1095,9 @@ readonly attribute Element? frameElement;
 WindowProxy open(optional DOMString url = "about:blank", optional DOMString target = "_blank", [TreatNullAs=EmptyString] optional DOMString features = "", optional boolean replace = false);
 getter WindowProxy (unsigned long index);
 getter object (DOMString name);
+// Since this is the global object, the IDL named getter adds a NamedPropertiesObject exotic
+// object on the prototype chain. Indeed, this does not make the global object an exotic object.
+// Indexed access is taken care of by the WindowProxy exotic object.
 
 // the user agent
 readonly attribute Navigator navigator;
@@ -1144,7 +1108,6 @@ void alert(DOMString message);
 boolean confirm(optional DOMString message = "");
 DOMString? prompt(optional DOMString message = "", optional DOMString default = "");
 void print();
-any showModalDialog(DOMString url, optional any argument); // deprecated
 
 unsigned long requestAnimationFrame(FrameRequestCallback callback);
 void cancelAnimationFrame(unsigned long handle);
@@ -1175,23 +1138,22 @@ interface History {
 };
 
 
-[Unforgeable]
 interface Location {
-  stringifier attribute USVString href;
-  readonly attribute USVString origin;
-  attribute USVString protocol;
-  attribute USVString host;
-  attribute USVString hostname;
-  attribute USVString port;
-  attribute USVString pathname;
-  attribute USVString search;
-  attribute USVString hash;
+  [Unforgeable] stringifier attribute USVString href;
+  [Unforgeable] readonly attribute USVString origin;
+  [Unforgeable] attribute USVString protocol;
+  [Unforgeable] attribute USVString host;
+  [Unforgeable] attribute USVString hostname;
+  [Unforgeable] attribute USVString port;
+  [Unforgeable] attribute USVString pathname;
+  [Unforgeable] attribute USVString search;
+  [Unforgeable] attribute USVString hash;
 
-  void assign(USVString url);
-  void replace(USVString url);
-  void reload();
+  [Unforgeable] void assign(USVString url);
+  [Unforgeable] void replace(USVString url);
+  [Unforgeable] void reload();
 
-  [SameObject] readonly attribute USVString[] ancestorOrigins;
+  [Unforgeable, SameObject] readonly attribute USVString[] ancestorOrigins;
 };
 
 
@@ -1202,20 +1164,20 @@ interface PopStateEvent : Event {
 
 
 dictionary PopStateEventInit : EventInit {
-  any state;
+  any state = null;
 };
 
 
 [Constructor(DOMString type, optional HashChangeEventInit eventInitDict), Exposed=(Window,Worker)]
 interface HashChangeEvent : Event {
-  readonly attribute DOMString oldURL;
-  readonly attribute DOMString newURL;
+  readonly attribute USVString oldURL;
+  readonly attribute USVString newURL;
 };
 
 
 dictionary HashChangeEventInit : EventInit {
-  DOMString oldURL;
-  DOMString newURL;
+  USVString oldURL = "";
+  USVString newURL = "";
 };
 
 
@@ -1226,7 +1188,7 @@ interface PageTransitionEvent : Event {
 
 
 dictionary PageTransitionEventInit : EventInit {
-  boolean persisted;
+  boolean persisted = false;
 };
 
 
@@ -1298,7 +1260,6 @@ interface GlobalEventHandlers {
   attribute EventHandler onchange;
   attribute EventHandler onclick;
   attribute EventHandler onclose;
-  attribute EventHandler oncontextmenu;
   attribute EventHandler oncuechange;
   attribute EventHandler ondblclick;
   attribute EventHandler ondrag;
@@ -1381,31 +1342,28 @@ interface DocumentAndElementEventHandlers {
 };
 
 
+typedef (DOMString or Function) TimerHandler;
+
 [NoInterfaceObject, Exposed=(Window, Worker)]
-interface WindowBase64 {
+interface WindowOrWorkerGlobalScope {
+  [Replaceable] readonly attribute USVString origin;
+
+  // Base64 utility methods (WindowBase64)
   DOMString btoa(DOMString btoa);
   DOMString atob(DOMString atob);
-};
-Window implements WindowBase64;
-WorkerGlobalScope implements WindowBase64;
 
-
-[NoInterfaceObject, Exposed=(Window,Worker)]
-interface WindowTimers {
+  // Timers (WindowTimers)
   long setTimeout((Function or DOMString) handler, optional long timeout = 0, any... arguments);
   void clearTimeout(optional long handle = 0);
   long setInterval((Function or DOMString) handler, optional long timeout = 0, any... arguments);
   void clearInterval(optional long handle = 0);
-};
-Window implements WindowTimers;
-WorkerGlobalScope implements WindowTimers;
 
-
-[NoInterfaceObject]
-interface WindowModal {
-  readonly attribute any dialogArguments;
-  attribute any returnValue;
+  // ImageBitmap, Images (ImageBitmapFactories)
+  Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image);
+  Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, long sx, long sy, long sw, long sh);
 };
+Window implements WindowOrWorkerGlobalScope;
+WorkerGlobalScope implements WindowOrWorkerGlobalScope;
 
 
 interface Navigator {
@@ -1416,7 +1374,6 @@ Navigator implements NavigatorLanguage;
 Navigator implements NavigatorOnLine;
 Navigator implements NavigatorContentUtils;
 Navigator implements NavigatorCookies;
-Navigator implements NavigatorPlugins;
 
 
 [NoInterfaceObject, Exposed=(Window, Worker)]
@@ -1441,7 +1398,11 @@ interface NavigatorLanguage {
 interface NavigatorContentUtils {
   // content handler registration
   void registerProtocolHandler(DOMString scheme, DOMString url, DOMString title);
+  void registerContentHandler(DOMString mimeType, DOMString url, DOMString title);
+  DOMString isProtocolHandlerRegistered(DOMString scheme, DOMString url);
+  DOMString isContentHandlerRegistered(DOMString mimeType, DOMString url);
   void unregisterProtocolHandler(DOMString scheme, DOMString url);
+  void unregisterContentHandler(DOMString mimeType, DOMString url);
 };
 
 
@@ -1450,6 +1411,358 @@ interface NavigatorCookies {
   readonly attribute boolean cookieEnabled;
 };
 
+
+[Exposed=(Window, Worker), Serializable, Transferable]
+interface ImageBitmap {
+  readonly attribute unsigned long width;
+  readonly attribute unsigned long height;
+};
+
+typedef (HTMLImageElement or
+        HTMLVideoElement or
+        HTMLCanvasElement or
+        Blob or
+        ImageData or
+        CanvasRenderingContext2D or
+        ImageBitmap) ImageBitmapSource;
+
+
+// Note: intentionally not [HTMLConstructor]
+interface HTMLAppletElement : HTMLElement {
+  attribute DOMString align;
+  attribute DOMString alt;
+  attribute DOMString archive;
+  attribute DOMString code;
+  attribute USVString codeBase;
+  attribute DOMString height;
+  attribute unsigned long hspace;
+  attribute DOMString name;
+  attribute USVString _object; // the underscore is not part of the identifier
+  attribute unsigned long vspace;
+  attribute DOMString width;
+};
+
+
+[HTMLConstructor]
+interface HTMLMarqueeElement : HTMLElement {
+  [CEReactions] attribute DOMString behavior;
+  [CEReactions] attribute DOMString bgColor;
+  [CEReactions] attribute DOMString direction;
+  [CEReactions] attribute DOMString height;
+  [CEReactions] attribute unsigned long hspace;
+  [CEReactions] attribute long loop;
+  [CEReactions] attribute unsigned long scrollAmount;
+  [CEReactions] attribute unsigned long scrollDelay;
+  [CEReactions] attribute boolean trueSpeed;
+  [CEReactions] attribute unsigned long vspace;
+  [CEReactions] attribute DOMString width;
+
+  attribute EventHandler onbounce;
+  attribute EventHandler onfinish;
+  attribute EventHandler onstart;
+
+  void start();
+  void stop();
+};
+
+
+[HTMLConstructor]
+interface HTMLFrameSetElement : HTMLElement {
+  [CEReactions] attribute DOMString cols;
+  [CEReactions] attribute DOMString rows;
+};
+HTMLFrameSetElement implements WindowEventHandlers;
+
+
+[HTMLConstructor]
+interface HTMLFrameElement : HTMLElement {
+  [CEReactions] attribute DOMString name;
+  [CEReactions] attribute DOMString scrolling;
+  [CEReactions] attribute USVString src;
+  [CEReactions] attribute DOMString frameBorder;
+  [CEReactions] attribute USVString longDesc;
+  [CEReactions] attribute boolean noResize;
+  readonly attribute Document? contentDocument;
+  readonly attribute WindowProxy? contentWindow;
+
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString marginHeight;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString marginWidth;
+};
+
+
+partial interface HTMLAnchorElement {
+  [CEReactions] attribute DOMString coords;
+  [CEReactions] attribute DOMString charset;
+  [CEReactions] attribute DOMString name;
+  [CEReactions] attribute DOMString shape;
+};
+
+
+partial interface HTMLAreaElement {
+  [CEReactions] attribute boolean noHref;
+};
+
+
+partial interface HTMLBodyElement {
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString text;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString link;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString vLink;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString aLink;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString bgColor;
+  attribute DOMString background;
+};
+
+
+partial interface HTMLBRElement {
+  [CEReactions] attribute DOMString clear;
+};
+
+
+partial interface HTMLTableCaptionElement {
+  [CEReactions] attribute DOMString align;
+};
+
+
+partial interface HTMLTableColElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString ch;
+  [CEReactions] attribute DOMString chOff;
+  [CEReactions] attribute DOMString vAlign;
+  [CEReactions] attribute DOMString width;
+};
+
+
+[HTMLConstructor]
+interface HTMLDirectoryElement : HTMLElement {
+  [CEReactions] attribute boolean compact;
+};
+
+
+partial interface HTMLDivElement {
+  [CEReactions] attribute DOMString align;
+};
+
+
+partial interface HTMLDListElement {
+  [CEReactions] attribute boolean compact;
+};
+
+
+partial interface HTMLEmbedElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString name;
+};
+
+
+[HTMLConstructor]
+interface HTMLFontElement : HTMLElement {
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString color;
+  [CEReactions] attribute DOMString face;
+  [CEReactions] attribute DOMString size;
+};
+
+
+partial interface HTMLHeadingElement {
+  [CEReactions] attribute DOMString align;
+};
+
+
+partial interface HTMLHRElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString color;
+  [CEReactions] attribute boolean noShade;
+  [CEReactions] attribute DOMString size;
+  [CEReactions] attribute DOMString width;
+};
+
+
+partial interface HTMLHtmlElement {
+  [CEReactions] attribute DOMString version;
+};
+
+
+partial interface HTMLIFrameElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString scrolling;
+  [CEReactions] attribute DOMString frameBorder;
+  [CEReactions] attribute USVString longDesc;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString marginHeight;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString marginWidth;
+};
+
+
+partial interface HTMLImageElement {
+  [CEReactions] attribute DOMString name;
+  [CEReactions] attribute USVString lowsrc;
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute unsigned long hspace;
+  [CEReactions] attribute unsigned long vspace;
+
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString border;
+};
+
+
+partial interface HTMLInputElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString useMap;
+};
+
+
+partial interface HTMLLegendElement {
+  [CEReactions] attribute DOMString align;
+};
+
+
+partial interface HTMLLIElement {
+  [CEReactions] attribute DOMString type;
+};
+
+
+partial interface HTMLLinkElement {
+  [CEReactions] attribute DOMString charset;
+  [CEReactions] attribute DOMString target;
+};
+
+
+partial interface HTMLMenuElement {
+  [CEReactions] attribute boolean compact;
+};
+
+
+partial interface HTMLMetaElement {
+  [CEReactions] attribute DOMString scheme;
+};
+
+
+partial interface HTMLObjectElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString archive;
+  [CEReactions] attribute DOMString code;
+  [CEReactions] attribute boolean declare;
+  [CEReactions] attribute unsigned long hspace;
+  [CEReactions] attribute DOMString standby;
+  [CEReactions] attribute unsigned long vspace;
+  [CEReactions] attribute DOMString codeBase;
+  [CEReactions] attribute DOMString codeType;
+
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString border;
+};
+
+
+partial interface HTMLOListElement {
+  [CEReactions] attribute boolean compact;
+};
+
+
+partial interface HTMLParagraphElement {
+  [CEReactions] attribute DOMString align;
+};
+
+
+partial interface HTMLParamElement {
+  [CEReactions] attribute DOMString type;
+  [CEReactions] attribute DOMString valueType;
+};
+
+
+partial interface HTMLPreElement {
+  [CEReactions] attribute long width;
+};
+
+
+partial interface HTMLScriptElement {
+  [CEReactions] attribute DOMString event;
+  [CEReactions] attribute DOMString htmlFor;
+};
+
+
+partial interface HTMLTableElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString border;
+  [CEReactions] attribute DOMString frame;
+  [CEReactions] attribute DOMString rules;
+  [CEReactions] attribute DOMString summary;
+  [CEReactions] attribute DOMString width;
+
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString bgColor;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString cellPadding;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString cellSpacing;
+};
+
+
+partial interface HTMLTableSectionElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString ch;
+  [CEReactions] attribute DOMString chOff;
+  [CEReactions] attribute DOMString vAlign;
+};
+
+
+partial interface HTMLTableCellElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString axis;
+  [CEReactions] attribute DOMString height;
+  [CEReactions] attribute DOMString width;
+
+  [CEReactions] attribute DOMString ch;
+  [CEReactions] attribute DOMString chOff;
+  [CEReactions] attribute boolean noWrap;
+  [CEReactions] attribute DOMString vAlign;
+
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString bgColor;
+};
+
+
+partial interface HTMLTableRowElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString ch;
+  [CEReactions] attribute DOMString chOff;
+  [CEReactions] attribute DOMString vAlign;
+
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString bgColor;
+};
+
+
+partial interface HTMLUListElement {
+  [CEReactions] attribute boolean compact;
+  [CEReactions] attribute DOMString type;
+};
+
+
+partial interface Document {
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString fgColor;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString linkColor;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString vlinkColor;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString alinkColor;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString bgColor;
+
+  [SameObject] readonly attribute HTMLCollection anchors;
+  [SameObject] readonly attribute HTMLCollection applets;
+
+  void clear();
+  void captureEvents();
+  void releaseEvents();
+
+  [SameObject] readonly attribute HTMLAllCollection all;
+};
+
+
+partial interface Window {
+  void captureEvents();
+  void releaseEvents();
+
+  [Replaceable, SameObject] readonly attribute External external;
+};
+
+
+[NoInterfaceObject]
+interface External {
+  void AddSearchProvider();
+  void IsSearchProviderInstalled();
+};
+
+
+Navigator implements NavigatorPlugins;
 
 [NoInterfaceObject]
   interface NavigatorPlugins {
@@ -1489,392 +1802,6 @@ interface MimeType {
   readonly attribute DOMString description;
   readonly attribute DOMString suffixes; // comma-separated
   readonly attribute Plugin enabledPlugin;
-};
-
-
-[Exposed=(Window, Worker)]
-interface ImageBitmap {
-  readonly attribute unsigned long width;
-  readonly attribute unsigned long height;
-};
-
-typedef (HTMLImageElement or
-        HTMLVideoElement or
-        HTMLCanvasElement or
-        Blob or
-        ImageData or
-        CanvasRenderingContext2D or
-        ImageBitmap) ImageBitmapSource;
-
-
-[NoInterfaceObject, Exposed=(Window, Worker)]
-interface ImageBitmapFactories {
-  Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image);
-  Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, long sx, long sy, long sw, long sh);
-};
-Window implements ImageBitmapFactories;
-WorkerGlobalScope implements ImageBitmapFactories;
-
-
-interface HTMLAppletElement : HTMLElement {
-  attribute DOMString align;
-  attribute DOMString alt;
-  attribute DOMString archive;
-  attribute DOMString code;
-  attribute DOMString codeBase;
-  attribute DOMString height;
-  attribute unsigned long hspace;
-  attribute DOMString name;
-  attribute DOMString _object; // the underscore is not part of the identifier
-  attribute unsigned long vspace;
-  attribute DOMString width;
-};
-
-
-interface HTMLMarqueeElement : HTMLElement {
-  attribute DOMString behavior;
-  attribute DOMString bgColor;
-  attribute DOMString direction;
-  attribute DOMString height;
-  attribute unsigned long hspace;
-  attribute long loop;
-  attribute unsigned long scrollAmount;
-  attribute unsigned long scrollDelay;
-  attribute boolean trueSpeed;
-  attribute unsigned long vspace;
-  attribute DOMString width;
-
-  attribute EventHandler onbounce;
-  attribute EventHandler onfinish;
-  attribute EventHandler onstart;
-
-  void start();
-  void stop();
-};
-
-
-interface HTMLFrameSetElement : HTMLElement {
-  attribute DOMString cols;
-  attribute DOMString rows;
-};
-HTMLFrameSetElement implements WindowEventHandlers;
-
-
-interface HTMLFrameElement : HTMLElement {
-  attribute DOMString name;
-  attribute DOMString scrolling;
-  attribute DOMString src;
-  attribute DOMString frameBorder;
-  attribute boolean noResize;
-  readonly attribute Document? contentDocument;
-  readonly attribute WindowProxy? contentWindow;
-
-  [TreatNullAs=EmptyString] attribute DOMString marginHeight;
-  [TreatNullAs=EmptyString] attribute DOMString marginWidth;
-};
-
-
-[Exposed=(Window, SharedWorker)]
-interface ApplicationCache : EventTarget {
-  // update status
-  const unsigned short UNCACHED = 0;
-  const unsigned short IDLE = 1;
-  const unsigned short CHECKING = 2;
-  const unsigned short DOWNLOADING = 3;
-  const unsigned short UPDATEREADY = 4;
-  const unsigned short OBSOLETE = 5;
-  readonly attribute unsigned short status;
-
-  // updates
-  void update();
-  void abort();
-  void swapCache();
-
-  // events
-  attribute EventHandler onchecking;
-  attribute EventHandler onerror;
-  attribute EventHandler onnoupdate;
-  attribute EventHandler ondownloading;
-  attribute EventHandler onprogress;
-  attribute EventHandler onupdateready;
-  attribute EventHandler oncached;
-  attribute EventHandler onobsolete;
-};
-
-
-partial interface HTMLAnchorElement {
-  attribute DOMString coords;
-  attribute DOMString charset;
-  attribute DOMString name;
-  attribute DOMString shape;
-};
-
-
-partial interface HTMLAreaElement {
-  attribute boolean noHref;
-};
-
-
-partial interface HTMLBodyElement {
-  [TreatNullAs=EmptyString] attribute DOMString text;
-  [TreatNullAs=EmptyString] attribute DOMString link;
-  [TreatNullAs=EmptyString] attribute DOMString vLink;
-  [TreatNullAs=EmptyString] attribute DOMString aLink;
-  [TreatNullAs=EmptyString] attribute DOMString bgColor;
-  attribute DOMString background;
-};
-
-
-partial interface HTMLBRElement {
-  attribute DOMString clear;
-};
-
-
-partial interface HTMLTableCaptionElement {
-  attribute DOMString align;
-};
-
-
-partial interface HTMLTableColElement {
-  attribute DOMString align;
-  attribute DOMString ch;
-  attribute DOMString chOff;
-  attribute DOMString vAlign;
-  attribute DOMString width;
-};
-
-
-interface HTMLDirectoryElement : HTMLElement {
-  attribute boolean compact;
-};
-
-
-partial interface HTMLDivElement {
-  attribute DOMString align;
-};
-
-
-partial interface HTMLDListElement {
-  attribute boolean compact;
-};
-
-
-partial interface HTMLEmbedElement {
-  attribute DOMString align;
-  attribute DOMString name;
-};
-
-
-interface HTMLFontElement : HTMLElement {
-  [TreatNullAs=EmptyString] attribute DOMString color;
-  attribute DOMString face;
-  attribute DOMString size;
-};
-
-
-partial interface HTMLHeadingElement {
-  attribute DOMString align;
-};
-
-
-partial interface HTMLHRElement {
-  attribute DOMString align;
-  attribute DOMString color;
-  attribute boolean noShade;
-  attribute DOMString size;
-  attribute DOMString width;
-};
-
-
-partial interface HTMLHtmlElement {
-  attribute DOMString version;
-};
-
-
-partial interface HTMLIFrameElement {
-  attribute DOMString align;
-  attribute DOMString scrolling;
-  attribute DOMString frameBorder;
-
-  [TreatNullAs=EmptyString] attribute DOMString marginHeight;
-  [TreatNullAs=EmptyString] attribute DOMString marginWidth;
-};
-
-
-partial interface HTMLImageElement {
-  attribute DOMString name;
-  attribute DOMString lowsrc;
-  attribute DOMString align;
-  attribute unsigned long hspace;
-  attribute unsigned long vspace;
-
-  [TreatNullAs=EmptyString] attribute DOMString border;
-};
-
-
-partial interface HTMLInputElement {
-  attribute DOMString align;
-  attribute DOMString useMap;
-};
-
-
-partial interface HTMLLegendElement {
-  attribute DOMString align;
-};
-
-
-partial interface HTMLLIElement {
-  attribute DOMString type;
-};
-
-
-partial interface HTMLLinkElement {
-  attribute DOMString charset;
-  attribute DOMString target;
-};
-
-
-partial interface HTMLMenuElement {
-  attribute boolean compact;
-};
-
-
-partial interface HTMLMetaElement {
-  attribute DOMString scheme;
-};
-
-
-partial interface HTMLObjectElement {
-  attribute DOMString align;
-  attribute DOMString archive;
-  attribute DOMString code;
-  attribute boolean declare;
-  attribute unsigned long hspace;
-  attribute DOMString standby;
-  attribute unsigned long vspace;
-  attribute DOMString codeBase;
-  attribute DOMString codeType;
-  attribute DOMString useMap;
-
-  [TreatNullAs=EmptyString] attribute DOMString border;
-};
-
-
-partial interface HTMLOListElement {
-  attribute boolean compact;
-};
-
-
-partial interface HTMLParagraphElement {
-  attribute DOMString align;
-};
-
-
-partial interface HTMLParamElement {
-  attribute DOMString type;
-  attribute DOMString valueType;
-};
-
-
-partial interface HTMLPreElement {
-  attribute long width;
-};
-
-
-partial interface HTMLScriptElement {
-  attribute DOMString event;
-  attribute DOMString htmlFor;
-};
-
-
-partial interface HTMLTableElement {
-  attribute DOMString align;
-  attribute DOMString border;
-  attribute DOMString frame;
-  attribute DOMString rules;
-  attribute DOMString summary;
-  attribute DOMString width;
-
-  [TreatNullAs=EmptyString] attribute DOMString bgColor;
-  [TreatNullAs=EmptyString] attribute DOMString cellPadding;
-  [TreatNullAs=EmptyString] attribute DOMString cellSpacing;
-};
-
-
-partial interface HTMLTableSectionElement {
-  attribute DOMString align;
-  attribute DOMString ch;
-  attribute DOMString chOff;
-  attribute DOMString vAlign;
-};
-
-
-partial interface HTMLTableCellElement {
-  attribute DOMString align;
-  attribute DOMString axis;
-  attribute DOMString height;
-  attribute DOMString width;
-
-  attribute DOMString ch;
-  attribute DOMString chOff;
-  attribute boolean noWrap;
-  attribute DOMString vAlign;
-
-  [TreatNullAs=EmptyString] attribute DOMString bgColor;
-};
-
-
-partial interface HTMLTableDataCellElement {
-  attribute DOMString abbr;
-};
-
-
-partial interface HTMLTableRowElement {
-  attribute DOMString align;
-  attribute DOMString ch;
-  attribute DOMString chOff;
-  attribute DOMString vAlign;
-
-  [TreatNullAs=EmptyString] attribute DOMString bgColor;
-};
-
-
-partial interface HTMLUListElement {
-  attribute boolean compact;
-  attribute DOMString type;
-};
-
-
-partial interface Document {
-  [TreatNullAs=EmptyString] attribute DOMString fgColor;
-  [TreatNullAs=EmptyString] attribute DOMString linkColor;
-  [TreatNullAs=EmptyString] attribute DOMString vlinkColor;
-  [TreatNullAs=EmptyString] attribute DOMString alinkColor;
-  [TreatNullAs=EmptyString] attribute DOMString bgColor;
-
-  [SameObject] readonly attribute HTMLCollection anchors;
-  [SameObject] readonly attribute HTMLCollection applets;
-
-  void clear();
-  void captureEvents();
-  void releaseEvents();
-
-  [SameObject] readonly attribute HTMLAllCollection all;
-};
-
-
-partial interface Window {
-  void captureEvents();
-  void releaseEvents();
-
-  [Replaceable, SameObject] readonly attribute External external;
-};
-
-
-[NoInterfaceObject]
-interface External {
-  void AddSearchProvider();
-  void IsSearchProviderInstalled();
 };
 
 
@@ -1904,34 +1831,29 @@ interface HTMLOptionsCollection : HTMLCollection {
   attribute long selectedIndex;
 };
 
-[OverrideBuiltins]
-interface DOMStringMap {
-  getter DOMString (DOMString name);
-  setter void (DOMString name, DOMString value);
-  deleter void (DOMString name);
-};
-
-interface DOMElementMap {
-  getter Element (DOMString name);
-  setter creator void (DOMString name, Element value);
-  deleter void (DOMString name);
+interface DOMStringList {
+  readonly attribute unsigned long length;
+  getter DOMString? item(unsigned long index);
+  boolean contains(DOMString string);
 };
 
 enum DocumentReadyState { "loading", "interactive", "complete" };
 
+typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
+
 [OverrideBuiltins]
-partial /*sealed*/ interface Document {
+partial interface Document {
   // resource metadata management
   [PutForwards=href, Unforgeable] readonly attribute Location? location;
-  attribute DOMString domain;
-  readonly attribute DOMString referrer;
-  attribute DOMString cookie;
+  attribute USVString domain;
+  readonly attribute USVString referrer;
+  attribute USVString cookie;
   readonly attribute DOMString lastModified;
   readonly attribute DocumentReadyState readyState;
 
   // DOM tree accessors
   getter object (DOMString name);
-  attribute DOMString title;
+  [CEReactions] attribute DOMString title;
   attribute DOMString dir;
   attribute HTMLElement? body;
   readonly attribute HTMLHeadElement? head;
@@ -1942,21 +1864,21 @@ partial /*sealed*/ interface Document {
   [SameObject] readonly attribute HTMLCollection forms;
   [SameObject] readonly attribute HTMLCollection scripts;
   NodeList getElementsByName(DOMString elementName);
-  readonly attribute HTMLScriptElement? currentScript;
+  readonly attribute HTMLOrSVGScriptElement? currentScript; // classic scripts in a document tree only
 
   // dynamic markup insertion
   Document open(optional DOMString type = "text/html", optional DOMString replace = "");
   WindowProxy open(DOMString url, DOMString name, DOMString features, optional boolean replace = false);
-  void close();
-  void write(DOMString... text);
-  void writeln(DOMString... text);
+  [CEReactions] void close();
+  [CEReactions] void write(DOMString... text);
+  [CEReactions] void writeln(DOMString... text);
 
   // user interaction
   readonly attribute WindowProxy? defaultView;
   readonly attribute Element? activeElement;
   boolean hasFocus();
-  attribute DOMString designMode;
-  boolean execCommand(DOMString commandId, optional boolean showUI = false, optional DOMString value = "");
+  [CEReactions] attribute DOMString designMode;
+  [CEReactions] boolean execCommand(DOMString commandId, optional boolean showUI = false, optional DOMString value = "");
   boolean queryCommandEnabled(DOMString commandId);
   boolean queryCommandIndeterm(DOMString commandId);
   boolean queryCommandState(DOMString commandId);
@@ -1969,36 +1891,40 @@ partial /*sealed*/ interface Document {
 Document implements GlobalEventHandlers;
 Document implements DocumentAndElementEventHandlers;
 
-partial interface XMLDocument {
-  boolean load(DOMString url);
-};
-
+[HTMLConstructor]
 interface HTMLElement : Element {
   // metadata attributes
-  attribute DOMString title;
-  attribute DOMString lang;
-  attribute boolean translate;
-  attribute DOMString dir;
+  [CEReactions] attribute DOMString title;
+  [CEReactions] attribute DOMString lang;
+  [CEReactions] attribute boolean translate;
+  [CEReactions] attribute DOMString dir;
   [SameObject] readonly attribute DOMStringMap dataset;
 
   // user interaction
-  attribute boolean hidden;
+  [CEReactions] attribute boolean hidden;
   void click();
-  attribute long tabIndex;
+  [CEReactions] attribute long tabIndex;
   void focus();
   void blur();
-  attribute DOMString accessKey;
-  attribute boolean draggable;
-  [PutForwards=value] readonly attribute DOMTokenList dropzone;
-  attribute HTMLMenuElement? contextMenu;
-  attribute boolean spellcheck;
+  [CEReactions] attribute DOMString accessKey;
+  [CEReactions] attribute boolean draggable;
+  [CEReactions] attribute boolean spellcheck;
   void forceSpellCheck();
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString innerText;
 };
 HTMLElement implements GlobalEventHandlers;
 HTMLElement implements DocumentAndElementEventHandlers;
 HTMLElement implements ElementContentEditable;
 
+// Note: intentionally not [HTMLConstructor]
 interface HTMLUnknownElement : HTMLElement { };
+
+[OverrideBuiltins]
+interface DOMStringMap {
+  getter DOMString (DOMString name);
+  [CEReactions] setter void (DOMString name, DOMString value);
+  [CEReactions] deleter void (DOMString name);
+};
 
 interface HTMLHtmlElement : HTMLElement {};
 
@@ -2014,17 +1940,19 @@ interface HTMLBaseElement : HTMLElement {
 };
 
 interface HTMLLinkElement : HTMLElement {
-  attribute DOMString href;
-  attribute DOMString? crossOrigin;
-  attribute DOMString rel;
-  attribute DOMString rev;
-  [SameObject, PutForwards=value]readonly attribute DOMTokenList relList;
-  attribute DOMString media;
-  attribute DOMString hreflang;
-  attribute DOMString type;
-  [SameObject, PutForwards=value] readonly attribute DOMTokenList sizes;
+   [CEReactions] attribute USVString href;
+   [CEReactions] attribute DOMString? crossOrigin;
+   [CEReactions] attribute DOMString rel;
+   [CEReactions] attribute DOMString rev;
+   [CEReactions, SameObject, PutForwards=value] readonly attribute DOMTokenList relList;
+   [CEReactions] attribute DOMString media;
+   [CEReactions] attribute DOMString nonce;
+   [CEReactions] attribute DOMString hreflang;
+   [CEReactions] attribute DOMString type;
+   [CEReactions, SameObject, PutForwards=value] readonly attribute DOMTokenList sizes;
+   [CEReactions] attribute DOMString referrerPolicy;
 };
-HTMLLinkElement implements LinkStyle;
+ HTMLLinkElement implements LinkStyle;
 
 interface HTMLMetaElement : HTMLElement {
   attribute DOMString name;
@@ -2080,6 +2008,7 @@ interface HTMLAnchorElement : HTMLElement {
   attribute DOMString hreflang;
   attribute DOMString type;
   attribute DOMString text;
+  attribute DOMString referrerPolicy;
 };
 HTMLAnchorElement implements HTMLHyperlinkElementUtils;
 
@@ -2102,7 +2031,9 @@ interface HTMLModElement : HTMLElement {
 
 interface HTMLPictureElement : HTMLElement {};
 
-partial interface HTMLSourceElement {
+interface HTMLSourceElement : HTMLElement {
+  attribute DOMString src;
+  attribute DOMString type;
   attribute DOMString srcset;
   attribute DOMString sizes;
   attribute DOMString media;
@@ -2116,6 +2047,7 @@ interface HTMLImageElement : HTMLElement {
   attribute DOMString sizes;
   attribute DOMString? crossOrigin;
   attribute DOMString useMap;
+  attribute DOMString longDesc;
   attribute boolean isMap;
   attribute unsigned long width;
   attribute unsigned long height;
@@ -2123,16 +2055,19 @@ interface HTMLImageElement : HTMLElement {
   readonly attribute unsigned long naturalHeight;
   readonly attribute boolean complete;
   readonly attribute DOMString currentSrc;
+  attribute DOMString referrerPolicy;
 };
 
 interface HTMLIFrameElement : HTMLElement {
   attribute DOMString src;
   attribute DOMString srcdoc;
   attribute DOMString name;
-  [PutForwards=value] readonly attribute DOMTokenList sandbox;
+  [SameObject, PutForwards=value] readonly attribute DOMTokenList sandbox;
   attribute boolean allowFullscreen;
+  attribute boolean allowPaymentRequest;
   attribute DOMString width;
   attribute DOMString height;
+  attribute DOMString referrerPolicy;
   readonly attribute Document? contentDocument;
   readonly attribute WindowProxy? contentWindow;
 };
@@ -2181,11 +2116,6 @@ interface HTMLVideoElement : HTMLMediaElement {
 
 [NamedConstructor=Audio(optional DOMString src)]
 interface HTMLAudioElement : HTMLMediaElement {};
-
-interface HTMLSourceElement : HTMLElement {
-  attribute DOMString src;
-  attribute DOMString type;
-};
 
 interface HTMLTrackElement : HTMLElement {
   attribute DOMString kind;
@@ -2378,7 +2308,7 @@ interface TrackEvent : Event {
 };
 
 dictionary TrackEventInit : EventInit {
-  (VideoTrack or AudioTrack or TextTrack)? track;
+  (VideoTrack or AudioTrack or TextTrack)? track = null;
 };
 
 interface HTMLMapElement : HTMLElement {
@@ -2394,9 +2324,10 @@ interface HTMLAreaElement : HTMLElement {
   attribute DOMString target;
   attribute DOMString download;
   attribute DOMString rel;
-  readonly attribute DOMTokenList relList;
+  [SameObject, PutForwards=value] readonly attribute DOMTokenList relList;
   attribute DOMString hreflang;
   attribute DOMString type;
+  attribute DOMString referrerPolicy;
 };
 HTMLAreaElement implements HTMLHyperlinkElementUtils;
 
@@ -2462,7 +2393,7 @@ interface HTMLTableHeaderCellElement : HTMLTableCellElement {
 interface HTMLTableCellElement : HTMLElement {
   attribute unsigned long colSpan;
   attribute unsigned long rowSpan;
-  [PutForwards=value] readonly attribute DOMTokenList headers;
+  [SameObject, PutForwards=value] readonly attribute DOMTokenList headers;
   readonly attribute long cellIndex;
 };
 
@@ -2513,7 +2444,6 @@ interface HTMLInputElement : HTMLElement {
   attribute DOMString formTarget;
   attribute unsigned long height;
   attribute boolean indeterminate;
-  attribute DOMString inputMode;
   readonly attribute HTMLElement? list;
   attribute DOMString max;
   attribute long maxLength;
@@ -2524,7 +2454,7 @@ interface HTMLInputElement : HTMLElement {
   attribute DOMString pattern;
   attribute DOMString placeholder;
   attribute boolean readOnly;
-  attribute boolean required;
+  attribute boolean _required;
   attribute unsigned long size;
   attribute DOMString src;
   attribute DOMString step;
@@ -2548,9 +2478,9 @@ interface HTMLInputElement : HTMLElement {
   [SameObject] readonly attribute NodeList labels;
 
   void select();
-  attribute unsigned long selectionStart;
-  attribute unsigned long selectionEnd;
-  attribute DOMString selectionDirection;
+  attribute unsigned long? selectionStart;
+  attribute unsigned long? selectionEnd;
+  attribute DOMString? selectionDirection;
   void setRangeText(DOMString replacement);
   void setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional SelectionMode selectionMode = "preserve");
   void setSelectionRange(unsigned long start, unsigned long end, optional DOMString direction);
@@ -2568,7 +2498,6 @@ interface HTMLButtonElement : HTMLElement {
   attribute DOMString name;
   attribute DOMString type;
   attribute DOMString value;
-  attribute HTMLMenuElement? menu;
 
   readonly attribute boolean willValidate;
   readonly attribute ValidityState validity;
@@ -2587,7 +2516,7 @@ interface HTMLSelectElement : HTMLElement {
   readonly attribute HTMLFormElement? form;
   attribute boolean multiple;
   attribute DOMString name;
-  attribute boolean required;
+  attribute boolean _required;
   attribute unsigned long size;
 
   readonly attribute DOMString type;
@@ -2644,13 +2573,12 @@ interface HTMLTextAreaElement : HTMLElement {
   attribute DOMString dirName;
   attribute boolean disabled;
   readonly attribute HTMLFormElement? form;
-  attribute DOMString inputMode;
   attribute long maxLength;
   attribute long minLength;
   attribute DOMString name;
   attribute DOMString placeholder;
   attribute boolean readOnly;
-  attribute boolean required;
+  attribute boolean _required;
   attribute unsigned long rows;
   attribute DOMString wrap;
 
@@ -2669,32 +2597,12 @@ interface HTMLTextAreaElement : HTMLElement {
   [SameObject] readonly attribute NodeList labels;
 
   void select();
-  attribute unsigned long selectionStart;
-  attribute unsigned long selectionEnd;
-  attribute DOMString selectionDirection;
+  attribute unsigned long? selectionStart;
+  attribute unsigned long? selectionEnd;
+  attribute DOMString? selectionDirection;
   void setRangeText(DOMString replacement);
   void setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional SelectionMode selectionMode = "preserve");
   void setSelectionRange(unsigned long start, unsigned long end, optional DOMString direction);
-};
-
-interface HTMLKeygenElement : HTMLElement {
-  attribute boolean autofocus;
-  attribute DOMString challenge;
-  attribute boolean disabled;
-  readonly attribute HTMLFormElement? form;
-  attribute DOMString keytype;
-  attribute DOMString name;
-
-  readonly attribute DOMString type;
-
-  readonly attribute boolean willValidate;
-  readonly attribute ValidityState validity;
-  readonly attribute DOMString validationMessage;
-  boolean checkValidity();
-  boolean reportValidity();
-  void setCustomValidity(DOMString error);
-
-  [SameObject] readonly attribute NodeList labels;
 };
 
 interface HTMLOutputElement : HTMLElement {
@@ -2779,28 +2687,12 @@ interface HTMLDetailsElement : HTMLElement {
   attribute boolean open;
 };
 
-interface HTMLMenuElement : HTMLElement {
-  attribute DOMString type;
-  attribute DOMString label;
-};
-
-interface HTMLMenuItemElement : HTMLElement {
-  attribute DOMString type;
-  attribute DOMString label;
-  attribute DOMString icon;
-  attribute boolean disabled;
-  attribute boolean checked;
-  attribute DOMString radiogroup;
-  attribute boolean default;
-};
-
-[Constructor(DOMString type, optional RelatedEventInit eventInitDict)]
-interface RelatedEvent : Event {
-  readonly attribute EventTarget? relatedTarget;
-};
-
-dictionary RelatedEventInit : EventInit {
-  EventTarget? relatedTarget;
+interface HTMLDialogElement : HTMLElement {
+  attribute boolean open;
+  attribute DOMString returnValue;
+  void show(optional (MouseEvent or Element) anchor);
+  void showModal(optional (MouseEvent or Element) anchor);
+  void close(optional DOMString returnValue);
 };
 
 interface HTMLScriptElement : HTMLElement {
@@ -2814,6 +2706,8 @@ interface HTMLScriptElement : HTMLElement {
   attribute DOMString nonce;
 };
 
+[Exposed=Window,
+ HTMLConstructor]
 interface HTMLTemplateElement : HTMLElement {
   readonly attribute DocumentFragment content;
 };
@@ -2914,6 +2808,9 @@ readonly attribute Element? frameElement;
 WindowProxy open(optional DOMString url = "about:blank", optional DOMString target = "_blank", [TreatNullAs=EmptyString] optional DOMString features = "", optional boolean replace = false);
 getter WindowProxy (unsigned long index);
 getter object (DOMString name);
+// Since this is the global object, the IDL named getter adds a NamedPropertiesObject exotic
+// object on the prototype chain. Indeed, this does not make the global object an exotic object.
+// Indexed access is taken care of by the WindowProxy exotic object.
 
 // the user agent
 readonly attribute Navigator navigator;
@@ -2924,7 +2821,6 @@ void alert(DOMString message);
 boolean confirm(optional DOMString message = "");
 DOMString? prompt(optional DOMString message = "", optional DOMString default = "");
 void print();
-any showModalDialog(DOMString url, optional any argument); // deprecated
 
 unsigned long requestAnimationFrame(FrameRequestCallback callback);
 void cancelAnimationFrame(unsigned long handle);
@@ -2951,23 +2847,22 @@ interface History {
   void replaceState(any data, DOMString title, optional DOMString? url = null);
 };
 
-[Unforgeable]
 interface Location {
-  stringifier attribute USVString href;
-  readonly attribute USVString origin;
-  attribute USVString protocol;
-  attribute USVString host;
-  attribute USVString hostname;
-  attribute USVString port;
-  attribute USVString pathname;
-  attribute USVString search;
-  attribute USVString hash;
+  [Unforgeable] stringifier attribute USVString href;
+  [Unforgeable] readonly attribute USVString origin;
+  [Unforgeable] attribute USVString protocol;
+  [Unforgeable] attribute USVString host;
+  [Unforgeable] attribute USVString hostname;
+  [Unforgeable] attribute USVString port;
+  [Unforgeable] attribute USVString pathname;
+  [Unforgeable] attribute USVString search;
+  [Unforgeable] attribute USVString hash;
 
-  void assign(USVString url);
-  void replace(USVString url);
-  void reload();
+  [Unforgeable] void assign(USVString url);
+  [Unforgeable] void replace(USVString url);
+  [Unforgeable] void reload();
 
-  [SameObject] readonly attribute USVString[] ancestorOrigins;
+  [Unforgeable, SameObject] readonly attribute USVString[] ancestorOrigins;
 };
 
 [Constructor(DOMString type, optional PopStateEventInit eventInitDict), Exposed=(Window,Worker)]
@@ -2976,18 +2871,18 @@ interface PopStateEvent : Event {
 };
 
 dictionary PopStateEventInit : EventInit {
-  any state;
+  any state = null;
 };
 
 [Constructor(DOMString type, optional HashChangeEventInit eventInitDict), Exposed=(Window,Worker)]
 interface HashChangeEvent : Event {
-  readonly attribute DOMString oldURL;
-  readonly attribute DOMString newURL;
+  readonly attribute USVString oldURL;
+  readonly attribute USVString newURL;
 };
 
 dictionary HashChangeEventInit : EventInit {
-  DOMString oldURL;
-  DOMString newURL;
+  USVString oldURL = "";
+  USVString newURL = "";
 };
 
 [Constructor(DOMString type, optional PageTransitionEventInit eventInitDict), Exposed=(Window,Worker)]
@@ -2996,7 +2891,7 @@ interface PageTransitionEvent : Event {
 };
 
 dictionary PageTransitionEventInit : EventInit {
-  boolean persisted;
+  boolean persisted = false;
 };
 
 interface BeforeUnloadEvent : Event {
@@ -3058,7 +2953,6 @@ interface GlobalEventHandlers {
   attribute EventHandler onchange;
   attribute EventHandler onclick;
   attribute EventHandler onclose;
-  attribute EventHandler oncontextmenu;
   attribute EventHandler oncuechange;
   attribute EventHandler ondblclick;
   attribute EventHandler ondrag;
@@ -3138,29 +3032,28 @@ interface DocumentAndElementEventHandlers {
   attribute EventHandler onpaste;
 };
 
+typedef (DOMString or Function) TimerHandler;
+
 [NoInterfaceObject, Exposed=(Window, Worker)]
-interface WindowBase64 {
+interface WindowOrWorkerGlobalScope {
+  [Replaceable] readonly attribute USVString origin;
+
+  // Base64 utility methods (WindowBase64)
   DOMString btoa(DOMString btoa);
   DOMString atob(DOMString atob);
-};
-Window implements WindowBase64;
-WorkerGlobalScope implements WindowBase64;
 
-[NoInterfaceObject, Exposed=(Window,Worker)]
-interface WindowTimers {
+  // Timers (WindowTimers)
   long setTimeout((Function or DOMString) handler, optional long timeout = 0, any... arguments);
   void clearTimeout(optional long handle = 0);
   long setInterval((Function or DOMString) handler, optional long timeout = 0, any... arguments);
   void clearInterval(optional long handle = 0);
-};
-Window implements WindowTimers;
-WorkerGlobalScope implements WindowTimers;
 
-[NoInterfaceObject]
-interface WindowModal {
-  readonly attribute any dialogArguments;
-  attribute any returnValue;
+  // ImageBitmap, Images (ImageBitmapFactories)
+  Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image);
+  Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, long sx, long sy, long sw, long sh);
 };
+Window implements WindowOrWorkerGlobalScope;
+WorkerGlobalScope implements WindowOrWorkerGlobalScope;
 
 interface Navigator {
   // objects implementing this interface also implement the interfaces given below
@@ -3170,7 +3063,6 @@ Navigator implements NavigatorLanguage;
 Navigator implements NavigatorOnLine;
 Navigator implements NavigatorContentUtils;
 Navigator implements NavigatorCookies;
-Navigator implements NavigatorPlugins;
 
 [NoInterfaceObject, Exposed=(Window, Worker)]
 interface NavigatorID {
@@ -3192,13 +3084,328 @@ interface NavigatorLanguage {
 interface NavigatorContentUtils {
   // content handler registration
   void registerProtocolHandler(DOMString scheme, DOMString url, DOMString title);
+  void registerContentHandler(DOMString mimeType, DOMString url, DOMString title);
+  DOMString isProtocolHandlerRegistered(DOMString scheme, DOMString url);
+  DOMString isContentHandlerRegistered(DOMString mimeType, DOMString url);
   void unregisterProtocolHandler(DOMString scheme, DOMString url);
+  void unregisterContentHandler(DOMString mimeType, DOMString url);
 };
 
 [NoInterfaceObject]
 interface NavigatorCookies {
   readonly attribute boolean cookieEnabled;
 };
+
+[Exposed=(Window, Worker), Serializable, Transferable]
+interface ImageBitmap {
+  readonly attribute unsigned long width;
+  readonly attribute unsigned long height;
+};
+
+typedef (HTMLImageElement or
+        HTMLVideoElement or
+        HTMLCanvasElement or
+        Blob or
+        ImageData or
+        CanvasRenderingContext2D or
+        ImageBitmap) ImageBitmapSource;
+
+// Note: intentionally not [HTMLConstructor]
+interface HTMLAppletElement : HTMLElement {
+  attribute DOMString align;
+  attribute DOMString alt;
+  attribute DOMString archive;
+  attribute DOMString code;
+  attribute USVString codeBase;
+  attribute DOMString height;
+  attribute unsigned long hspace;
+  attribute DOMString name;
+  attribute USVString _object; // the underscore is not part of the identifier
+  attribute unsigned long vspace;
+  attribute DOMString width;
+};
+
+[HTMLConstructor]
+interface HTMLMarqueeElement : HTMLElement {
+  [CEReactions] attribute DOMString behavior;
+  [CEReactions] attribute DOMString bgColor;
+  [CEReactions] attribute DOMString direction;
+  [CEReactions] attribute DOMString height;
+  [CEReactions] attribute unsigned long hspace;
+  [CEReactions] attribute long loop;
+  [CEReactions] attribute unsigned long scrollAmount;
+  [CEReactions] attribute unsigned long scrollDelay;
+  [CEReactions] attribute boolean trueSpeed;
+  [CEReactions] attribute unsigned long vspace;
+  [CEReactions] attribute DOMString width;
+
+  attribute EventHandler onbounce;
+  attribute EventHandler onfinish;
+  attribute EventHandler onstart;
+
+  void start();
+  void stop();
+};
+
+[HTMLConstructor]
+interface HTMLFrameSetElement : HTMLElement {
+  [CEReactions] attribute DOMString cols;
+  [CEReactions] attribute DOMString rows;
+};
+HTMLFrameSetElement implements WindowEventHandlers;
+
+[HTMLConstructor]
+interface HTMLFrameElement : HTMLElement {
+  [CEReactions] attribute DOMString name;
+  [CEReactions] attribute DOMString scrolling;
+  [CEReactions] attribute USVString src;
+  [CEReactions] attribute DOMString frameBorder;
+  [CEReactions] attribute USVString longDesc;
+  [CEReactions] attribute boolean noResize;
+  readonly attribute Document? contentDocument;
+  readonly attribute WindowProxy? contentWindow;
+
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString marginHeight;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString marginWidth;
+};
+
+partial interface HTMLAnchorElement {
+  [CEReactions] attribute DOMString coords;
+  [CEReactions] attribute DOMString charset;
+  [CEReactions] attribute DOMString name;
+  [CEReactions] attribute DOMString shape;
+};
+
+partial interface HTMLAreaElement {
+  [CEReactions] attribute boolean noHref;
+};
+
+partial interface HTMLBodyElement {
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString text;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString link;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString vLink;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString aLink;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString bgColor;
+  attribute DOMString background;
+};
+
+partial interface HTMLBRElement {
+  [CEReactions] attribute DOMString clear;
+};
+
+partial interface HTMLTableCaptionElement {
+  [CEReactions] attribute DOMString align;
+};
+
+partial interface HTMLTableColElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString ch;
+  [CEReactions] attribute DOMString chOff;
+  [CEReactions] attribute DOMString vAlign;
+  [CEReactions] attribute DOMString width;
+};
+
+[HTMLConstructor]
+interface HTMLDirectoryElement : HTMLElement {
+  [CEReactions] attribute boolean compact;
+};
+
+partial interface HTMLDivElement {
+  [CEReactions] attribute DOMString align;
+};
+
+partial interface HTMLDListElement {
+  [CEReactions] attribute boolean compact;
+};
+
+partial interface HTMLEmbedElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString name;
+};
+
+[HTMLConstructor]
+interface HTMLFontElement : HTMLElement {
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString color;
+  [CEReactions] attribute DOMString face;
+  [CEReactions] attribute DOMString size;
+};
+
+partial interface HTMLHeadingElement {
+  [CEReactions] attribute DOMString align;
+};
+
+partial interface HTMLHRElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString color;
+  [CEReactions] attribute boolean noShade;
+  [CEReactions] attribute DOMString size;
+  [CEReactions] attribute DOMString width;
+};
+
+partial interface HTMLHtmlElement {
+  [CEReactions] attribute DOMString version;
+};
+
+partial interface HTMLIFrameElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString scrolling;
+  [CEReactions] attribute DOMString frameBorder;
+  [CEReactions] attribute USVString longDesc;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString marginHeight;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString marginWidth;
+};
+
+partial interface HTMLImageElement {
+  [CEReactions] attribute DOMString name;
+  [CEReactions] attribute USVString lowsrc;
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute unsigned long hspace;
+  [CEReactions] attribute unsigned long vspace;
+
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString border;
+};
+
+partial interface HTMLInputElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString useMap;
+};
+
+partial interface HTMLLegendElement {
+  [CEReactions] attribute DOMString align;
+};
+
+partial interface HTMLLIElement {
+  [CEReactions] attribute DOMString type;
+};
+
+partial interface HTMLLinkElement {
+  [CEReactions] attribute DOMString charset;
+  [CEReactions] attribute DOMString target;
+};
+
+partial interface HTMLMenuElement {
+  [CEReactions] attribute boolean compact;
+};
+
+partial interface HTMLMetaElement {
+  [CEReactions] attribute DOMString scheme;
+};
+
+partial interface HTMLObjectElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString archive;
+  [CEReactions] attribute DOMString code;
+  [CEReactions] attribute boolean declare;
+  [CEReactions] attribute unsigned long hspace;
+  [CEReactions] attribute DOMString standby;
+  [CEReactions] attribute unsigned long vspace;
+  [CEReactions] attribute DOMString codeBase;
+  [CEReactions] attribute DOMString codeType;
+
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString border;
+};
+
+partial interface HTMLOListElement {
+  [CEReactions] attribute boolean compact;
+};
+
+partial interface HTMLParagraphElement {
+  [CEReactions] attribute DOMString align;
+};
+
+partial interface HTMLParamElement {
+  [CEReactions] attribute DOMString type;
+  [CEReactions] attribute DOMString valueType;
+};
+
+partial interface HTMLPreElement {
+  [CEReactions] attribute long width;
+};
+
+partial interface HTMLScriptElement {
+  [CEReactions] attribute DOMString event;
+  [CEReactions] attribute DOMString htmlFor;
+};
+
+partial interface HTMLTableElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString border;
+  [CEReactions] attribute DOMString frame;
+  [CEReactions] attribute DOMString rules;
+  [CEReactions] attribute DOMString summary;
+  [CEReactions] attribute DOMString width;
+
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString bgColor;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString cellPadding;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString cellSpacing;
+};
+
+partial interface HTMLTableSectionElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString ch;
+  [CEReactions] attribute DOMString chOff;
+  [CEReactions] attribute DOMString vAlign;
+};
+
+partial interface HTMLTableCellElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString axis;
+  [CEReactions] attribute DOMString height;
+  [CEReactions] attribute DOMString width;
+
+  [CEReactions] attribute DOMString ch;
+  [CEReactions] attribute DOMString chOff;
+  [CEReactions] attribute boolean noWrap;
+  [CEReactions] attribute DOMString vAlign;
+
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString bgColor;
+};
+
+partial interface HTMLTableRowElement {
+  [CEReactions] attribute DOMString align;
+  [CEReactions] attribute DOMString ch;
+  [CEReactions] attribute DOMString chOff;
+  [CEReactions] attribute DOMString vAlign;
+
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString bgColor;
+};
+
+partial interface HTMLUListElement {
+  [CEReactions] attribute boolean compact;
+  [CEReactions] attribute DOMString type;
+};
+
+partial interface Document {
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString fgColor;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString linkColor;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString vlinkColor;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString alinkColor;
+  [CEReactions, TreatNullAs=EmptyString] attribute DOMString bgColor;
+
+  [SameObject] readonly attribute HTMLCollection anchors;
+  [SameObject] readonly attribute HTMLCollection applets;
+
+  void clear();
+  void captureEvents();
+  void releaseEvents();
+
+  [SameObject] readonly attribute HTMLAllCollection all;
+};
+
+partial interface Window {
+  void captureEvents();
+  void releaseEvents();
+
+  [Replaceable, SameObject] readonly attribute External external;
+};
+
+[NoInterfaceObject]
+interface External {
+  void AddSearchProvider();
+  void IsSearchProviderInstalled();
+};
+
+Navigator implements NavigatorPlugins;
 
 [NoInterfaceObject]
   interface NavigatorPlugins {
@@ -3234,347 +3441,5 @@ interface MimeType {
   readonly attribute DOMString description;
   readonly attribute DOMString suffixes; // comma-separated
   readonly attribute Plugin enabledPlugin;
-};
-
-[Exposed=(Window, Worker)]
-interface ImageBitmap {
-  readonly attribute unsigned long width;
-  readonly attribute unsigned long height;
-};
-
-typedef (HTMLImageElement or
-        HTMLVideoElement or
-        HTMLCanvasElement or
-        Blob or
-        ImageData or
-        CanvasRenderingContext2D or
-        ImageBitmap) ImageBitmapSource;
-
-[NoInterfaceObject, Exposed=(Window, Worker)]
-interface ImageBitmapFactories {
-  Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image);
-  Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, long sx, long sy, long sw, long sh);
-};
-Window implements ImageBitmapFactories;
-WorkerGlobalScope implements ImageBitmapFactories;
-
-interface HTMLAppletElement : HTMLElement {
-  attribute DOMString align;
-  attribute DOMString alt;
-  attribute DOMString archive;
-  attribute DOMString code;
-  attribute DOMString codeBase;
-  attribute DOMString height;
-  attribute unsigned long hspace;
-  attribute DOMString name;
-  attribute DOMString _object; // the underscore is not part of the identifier
-  attribute unsigned long vspace;
-  attribute DOMString width;
-};
-
-interface HTMLMarqueeElement : HTMLElement {
-  attribute DOMString behavior;
-  attribute DOMString bgColor;
-  attribute DOMString direction;
-  attribute DOMString height;
-  attribute unsigned long hspace;
-  attribute long loop;
-  attribute unsigned long scrollAmount;
-  attribute unsigned long scrollDelay;
-  attribute boolean trueSpeed;
-  attribute unsigned long vspace;
-  attribute DOMString width;
-
-  attribute EventHandler onbounce;
-  attribute EventHandler onfinish;
-  attribute EventHandler onstart;
-
-  void start();
-  void stop();
-};
-
-interface HTMLFrameSetElement : HTMLElement {
-  attribute DOMString cols;
-  attribute DOMString rows;
-};
-HTMLFrameSetElement implements WindowEventHandlers;
-
-interface HTMLFrameElement : HTMLElement {
-  attribute DOMString name;
-  attribute DOMString scrolling;
-  attribute DOMString src;
-  attribute DOMString frameBorder;
-  attribute boolean noResize;
-  readonly attribute Document? contentDocument;
-  readonly attribute WindowProxy? contentWindow;
-
-  [TreatNullAs=EmptyString] attribute DOMString marginHeight;
-  [TreatNullAs=EmptyString] attribute DOMString marginWidth;
-};
-
-[Exposed=(Window, SharedWorker)]
-interface ApplicationCache : EventTarget {
-  // update status
-  const unsigned short UNCACHED = 0;
-  const unsigned short IDLE = 1;
-  const unsigned short CHECKING = 2;
-  const unsigned short DOWNLOADING = 3;
-  const unsigned short UPDATEREADY = 4;
-  const unsigned short OBSOLETE = 5;
-  readonly attribute unsigned short status;
-
-  // updates
-  void update();
-  void abort();
-  void swapCache();
-
-  // events
-  attribute EventHandler onchecking;
-  attribute EventHandler onerror;
-  attribute EventHandler onnoupdate;
-  attribute EventHandler ondownloading;
-  attribute EventHandler onprogress;
-  attribute EventHandler onupdateready;
-  attribute EventHandler oncached;
-  attribute EventHandler onobsolete;
-};
-
-partial interface HTMLAnchorElement {
-  attribute DOMString coords;
-  attribute DOMString charset;
-  attribute DOMString name;
-  attribute DOMString shape;
-};
-
-partial interface HTMLAreaElement {
-  attribute boolean noHref;
-};
-
-partial interface HTMLBodyElement {
-  [TreatNullAs=EmptyString] attribute DOMString text;
-  [TreatNullAs=EmptyString] attribute DOMString link;
-  [TreatNullAs=EmptyString] attribute DOMString vLink;
-  [TreatNullAs=EmptyString] attribute DOMString aLink;
-  [TreatNullAs=EmptyString] attribute DOMString bgColor;
-  attribute DOMString background;
-};
-
-partial interface HTMLBRElement {
-  attribute DOMString clear;
-};
-
-partial interface HTMLTableCaptionElement {
-  attribute DOMString align;
-};
-
-partial interface HTMLTableColElement {
-  attribute DOMString align;
-  attribute DOMString ch;
-  attribute DOMString chOff;
-  attribute DOMString vAlign;
-  attribute DOMString width;
-};
-
-interface HTMLDirectoryElement : HTMLElement {
-  attribute boolean compact;
-};
-
-partial interface HTMLDivElement {
-  attribute DOMString align;
-};
-
-partial interface HTMLDListElement {
-  attribute boolean compact;
-};
-
-partial interface HTMLEmbedElement {
-  attribute DOMString align;
-  attribute DOMString name;
-};
-
-interface HTMLFontElement : HTMLElement {
-  [TreatNullAs=EmptyString] attribute DOMString color;
-  attribute DOMString face;
-  attribute DOMString size;
-};
-
-partial interface HTMLHeadingElement {
-  attribute DOMString align;
-};
-
-partial interface HTMLHRElement {
-  attribute DOMString align;
-  attribute DOMString color;
-  attribute boolean noShade;
-  attribute DOMString size;
-  attribute DOMString width;
-};
-
-partial interface HTMLHtmlElement {
-  attribute DOMString version;
-};
-
-partial interface HTMLIFrameElement {
-  attribute DOMString align;
-  attribute DOMString scrolling;
-  attribute DOMString frameBorder;
-
-  [TreatNullAs=EmptyString] attribute DOMString marginHeight;
-  [TreatNullAs=EmptyString] attribute DOMString marginWidth;
-};
-
-partial interface HTMLImageElement {
-  attribute DOMString name;
-  attribute DOMString lowsrc;
-  attribute DOMString align;
-  attribute unsigned long hspace;
-  attribute unsigned long vspace;
-
-  [TreatNullAs=EmptyString] attribute DOMString border;
-};
-
-partial interface HTMLInputElement {
-  attribute DOMString align;
-  attribute DOMString useMap;
-};
-
-partial interface HTMLLegendElement {
-  attribute DOMString align;
-};
-
-partial interface HTMLLIElement {
-  attribute DOMString type;
-};
-
-partial interface HTMLLinkElement {
-  attribute DOMString charset;
-  attribute DOMString target;
-};
-
-partial interface HTMLMenuElement {
-  attribute boolean compact;
-};
-
-partial interface HTMLMetaElement {
-  attribute DOMString scheme;
-};
-
-partial interface HTMLObjectElement {
-  attribute DOMString align;
-  attribute DOMString archive;
-  attribute DOMString code;
-  attribute boolean declare;
-  attribute unsigned long hspace;
-  attribute DOMString standby;
-  attribute unsigned long vspace;
-  attribute DOMString codeBase;
-  attribute DOMString codeType;
-  attribute DOMString useMap;
-
-  [TreatNullAs=EmptyString] attribute DOMString border;
-};
-
-partial interface HTMLOListElement {
-  attribute boolean compact;
-};
-
-partial interface HTMLParagraphElement {
-  attribute DOMString align;
-};
-
-partial interface HTMLParamElement {
-  attribute DOMString type;
-  attribute DOMString valueType;
-};
-
-partial interface HTMLPreElement {
-  attribute long width;
-};
-
-partial interface HTMLScriptElement {
-  attribute DOMString event;
-  attribute DOMString htmlFor;
-};
-
-partial interface HTMLTableElement {
-  attribute DOMString align;
-  attribute DOMString border;
-  attribute DOMString frame;
-  attribute DOMString rules;
-  attribute DOMString summary;
-  attribute DOMString width;
-
-  [TreatNullAs=EmptyString] attribute DOMString bgColor;
-  [TreatNullAs=EmptyString] attribute DOMString cellPadding;
-  [TreatNullAs=EmptyString] attribute DOMString cellSpacing;
-};
-
-partial interface HTMLTableSectionElement {
-  attribute DOMString align;
-  attribute DOMString ch;
-  attribute DOMString chOff;
-  attribute DOMString vAlign;
-};
-
-partial interface HTMLTableCellElement {
-  attribute DOMString align;
-  attribute DOMString axis;
-  attribute DOMString height;
-  attribute DOMString width;
-
-  attribute DOMString ch;
-  attribute DOMString chOff;
-  attribute boolean noWrap;
-  attribute DOMString vAlign;
-
-  [TreatNullAs=EmptyString] attribute DOMString bgColor;
-};
-
-partial interface HTMLTableDataCellElement {
-  attribute DOMString abbr;
-};
-
-partial interface HTMLTableRowElement {
-  attribute DOMString align;
-  attribute DOMString ch;
-  attribute DOMString chOff;
-  attribute DOMString vAlign;
-
-  [TreatNullAs=EmptyString] attribute DOMString bgColor;
-};
-
-partial interface HTMLUListElement {
-  attribute boolean compact;
-  attribute DOMString type;
-};
-
-partial interface Document {
-  [TreatNullAs=EmptyString] attribute DOMString fgColor;
-  [TreatNullAs=EmptyString] attribute DOMString linkColor;
-  [TreatNullAs=EmptyString] attribute DOMString vlinkColor;
-  [TreatNullAs=EmptyString] attribute DOMString alinkColor;
-  [TreatNullAs=EmptyString] attribute DOMString bgColor;
-
-  [SameObject] readonly attribute HTMLCollection anchors;
-  [SameObject] readonly attribute HTMLCollection applets;
-
-  void clear();
-  void captureEvents();
-  void releaseEvents();
-
-  [SameObject] readonly attribute HTMLAllCollection all;
-};
-
-partial interface Window {
-  void captureEvents();
-  void releaseEvents();
-
-  [Replaceable, SameObject] readonly attribute External external;
-};
-
-[NoInterfaceObject]
-interface External {
-  void AddSearchProvider();
-  void IsSearchProviderInstalled();
 };
 
