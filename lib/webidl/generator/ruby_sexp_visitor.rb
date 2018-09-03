@@ -134,6 +134,18 @@ module WebIDL
       ]
     end
 
+    def visit_includes_statement(incls)
+      [:module, classify(incls.includer),
+        [:scope,
+          [:call, nil, :include,
+            [:arglist,
+              [:const, classify(impls.includee)]
+            ]
+          ]
+        ]
+      ]
+    end
+
     def visit_scoped_name(sn)
       [:const, classify(sn.qualified_name)]
     end

@@ -17,6 +17,7 @@ module WebIDL
         / Exception
         / Enum
         / TypeDef
+        / IncludesStatement
         / ImplementsStatement
       end
 
@@ -29,7 +30,7 @@ module WebIDL
       end
 
       rule Interface
-        "interface" ws name:identifier ws inherits:Inheritance ws "{" ws members:InterfaceMembers ws "}" ws ";" <ParseTree::Interface>
+        "interface" ws (mixin:"mixin" ws)? name:identifier ws inherits:Inheritance ws "{" ws members:InterfaceMembers ws "}" ws ";" <ParseTree::Interface>
       end
 
       rule Partial
@@ -109,6 +110,10 @@ module WebIDL
 
       rule ImplementsStatement
         implementor:ScopedName ws "implements" ws implementee:ScopedName ws ";" <ParseTree::ImplementsStatement>
+      end
+
+      rule IncludesStatement
+        includer:ScopedName ws "includes" ws includee:ScopedName ws ";" <ParseTree::IncludesStatement>
       end
 
       rule Const
@@ -255,6 +260,7 @@ module WebIDL
          / "exception"
          / "getter"
          / "implements"
+         / "includes"
          / "inherit"
          / "interface"
          / "legacycaller"
@@ -387,6 +393,7 @@ module WebIDL
         / "getraises"
         / "getter"
         / "implements"
+        / "includes"
         / "in"
         / "interface"
         / "long"

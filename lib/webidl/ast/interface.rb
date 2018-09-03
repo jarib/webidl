@@ -11,6 +11,7 @@ module WebIDL
                     :members,
                     :inherits,
                     :implements,
+                    :includes,
                     :partial
 
       def initialize(parent, name)
@@ -20,6 +21,7 @@ module WebIDL
         @members             = []
         @inherits            = []
         @implements          = []
+        @includes            = []
         @extended_attributes = []
         @partial             = false
       end
