@@ -3,16 +3,17 @@ module WebIDL
     class Operation < Node
 
       attr_reader :type, :name, :args, :specials, :raises
-      attr_accessor :stringifier
+      attr_accessor :extended_attributes, :stringifier
 
       def initialize(parent, type, opts = {})
-        @parent   = parent
-        @type     = type
-        @name     = opts[:name]     || ''
-        @static   = opts[:static]
-        @specials = opts[:specials] || []
-        @args     = opts[:args]     || []
-        @raises   = opts[:raises]   || []
+        @parent              = parent
+        @type                = type
+        @name                = opts[:name]                || ''
+        @static              = opts[:static]
+        @specials            = opts[:specials]            || []
+        @args                = opts[:args]                || []
+        @raises              = opts[:raises]              || []
+        @extended_attributes = opts[:extended_attributes] || []
       end
 
       def stringifier?
